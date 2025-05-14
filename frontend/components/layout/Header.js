@@ -11,10 +11,10 @@ export default function  Header(){
             {/*logo*/}
             <div className="pt-7 pb-0 ">
                 <Image
-                src="/logo_ensahome_white.png"
-                alt="Logo de l'application"
-                width={110}
-                height={40}/>
+                    src="/logo_ensahome_white.png"
+                    alt="Logo de l'application"
+                    width={110}
+                    height={40}/>
             </div>
 
             {/*Logement et Equipement */}
