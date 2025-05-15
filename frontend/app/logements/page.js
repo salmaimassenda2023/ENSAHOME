@@ -13,7 +13,7 @@ export default function LogementsPage (){
             </div>
             {/*sous titre*/}
             <div className="text-center m-10">
-                <h2 className="text-3xl leading-tight text-gray-500">
+                <h2 className="text-3xl leading-tight text-gray-500 text-center" >
                     Biens immobiliers à louer
                 </h2>
             </div>
