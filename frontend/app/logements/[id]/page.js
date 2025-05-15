@@ -112,7 +112,7 @@ export default function LogementDetails(){
 
             {/* Similar properties section */}
             <div className="mt-20 mb-10 hidden md:block">
-                <h2 className="text-3xl font-bold mb-8">Nos biens similaires</h2>
+                <h2 className="text-3xl font-bold mb-8 text-center">Nos biens similaires</h2>
                 <div className="marquee">
                     <div className="maylike-products-container track">
                         {logements.map((item) => (

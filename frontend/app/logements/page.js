@@ -12,11 +12,11 @@ export default function LogementsPage (){
                 </h1>
             </div>
             {/*sous titre*/}
-            <div className="text-center m-10">
-                <h2 className="text-3xl leading-tight text-gray-500 text-center" >
+
+            <h2 className="text-3xl leading-tight text-gray-500 " >
                     Biens immobiliers à louer
-                </h2>
-            </div>
+            </h2>
+
             {/*liste de logements*/}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-15">
                 {
