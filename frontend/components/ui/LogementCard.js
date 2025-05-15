@@ -3,6 +3,7 @@ import {IoIosArrowForward} from "react-icons/io";
 import Link from "next/link";
 
 
+
 export default function LogementCard({id,photos,nbresPiece,loyer,type,commodites}){
 
    return(
@@ -18,7 +19,7 @@ export default function LogementCard({id,photos,nbresPiece,loyer,type,commodites
                />
                {/* loyer*/}
                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 font-transparent ">
-                   <div className="bg-transparent bg-opacity-60 text-black px-6 py-2 rounded-full text-lg shadow-lg backdrop-blur-sm">
+                   <div className="bg-transparent border bg-opacity-60 text-black px-6 py-2 rounded-full text-lg shadow-lg backdrop-blur-sm">
                        {loyer}<span className="text-xs"> DH/mois</span>
                    </div>
                </div>

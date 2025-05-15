@@ -24,7 +24,7 @@ export default function LogementsPage (){
                         <LogementCard
                             key={item.id}
                             id={item.id}
-                        photos={item.photos}
+                        photos={item.photos[0]}
                         nbresPiece={item.nombrePieces}
                         loyer={item.loyer}
                         type={item.type}
