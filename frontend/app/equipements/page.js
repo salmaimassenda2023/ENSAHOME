@@ -25,8 +25,7 @@ export default function EquipementsPage (){
                             <EquipementCard
                                 key={item.id}
                                 id={item.id}
-                                photos={item.photos}
-                               description={item.desc}
+                                photos={item.photos[0]}
                                 designation={item.designation}
                                 prix={item.prix}
                             />

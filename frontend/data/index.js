@@ -1,4 +1,4 @@
-import {FaCouch, FaParking, FaSnowflake, FaWifi} from "react-icons/fa";
+import {FaCouch, FaParking, FaRecycle, FaSnowflake, FaWifi} from "react-icons/fa";
 
 
 
@@ -71,30 +71,36 @@ export const logements=[
 export const equipements=[
     {
         id:1,
-        photos:"/ordi.png",
+        photos:["/ordi.png","/ordi.png","/ordi.png"],
+        etas :{non:"utilisé",icon:<FaRecycle />},
         designation:"PC Portable",
-        desc:"petite description",
+        desc: "Ordinateur portable performant pour le travail académique et personnel.",
         prix:3000,
     },
     {
         id:2,
-        photos:"/salle.png",
+        photos:["/salle.png","/salle.png"],
+        etas :{non:"utilisé",icon:<FaRecycle />},
         designation:"Salle a manger",
-        desc:"petite description",
+        desc:"Salle à manger moderne composée d'une table spacieuse et de chaises assorties. Parfaite pour vos repas en famille ou entre amis. Design élégant, matériaux durables.\n" +
+            "\n",
         prix: 0,
     },
     {
         id:3,
-        photos:"/ordi.png",
+        photos:["/ordi.png","/ordi.png","/ordi.png"],
+        etas :{non:"utilisé",icon:<FaRecycle />},
         designation:"PC Portable",
-        desc:"petite description",
+        desc: "Ordinateur portable performant pour le travail académique et personnel.",
         prix:3000,
     },
     {
         id:4,
-        photos:"/salle.png",
+        photos:["/salle.png","/salle.png"],
+        etas :{non:"utilisé",icon:<FaRecycle />},
         designation:"Salle a manger",
-        desc:"petite description",
+        desc:"Salle à manger moderne composée d'une table spacieuse et de chaises assorties. Parfaite pour vos repas en famille ou entre amis. Design élégant, matériaux durables.\n" +
+            "\n",
         prix: 0,
     }
 ]

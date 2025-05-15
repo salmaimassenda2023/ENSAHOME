@@ -3,7 +3,7 @@ import {IoIosArrowForward} from "react-icons/io";
 import Link from "next/link";
 
 
-export default function EquipementCard({id,photos,description,designation,prix}){
+export default function EquipementCard({id,photos,designation,prix}){
 
     return(
 
@@ -35,7 +35,7 @@ export default function EquipementCard({id,photos,description,designation,prix})
             {/* design et desc   */}
             <div className="flex items-center justify-between m-3">
                 <h4 className="text-base font-medium ">{designation}</h4>
-                <h5 className="text-base font-medium ">{description} </h5>
+                {/*<h5 className="text-base font-medium ">{description} </h5>*/}
             </div>
 
         </div>
