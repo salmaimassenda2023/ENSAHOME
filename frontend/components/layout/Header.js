@@ -47,7 +47,7 @@ export default function Header() {
                 <Link href="/" className="hover:text-gray-300 transition">
                     <IoIosNotifications className="text-2xl" />
                 </Link>
-                <Link href="/" className="hover:text-gray-300 transition">
+                <Link href="/profil/publications" className="hover:text-gray-300 transition">
                     <IoPersonCircleSharp className="text-2xl" />
                 </Link>
             </div>
