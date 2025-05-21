@@ -53,22 +53,13 @@ export default function PublicationsPage() {
 
 
 
-    function handleOpenFormLogement(logements1) {
-
-
-    }
-
-    function handleOpenFormEquip(equipements) {
-
-    }
-
     return (
         <div >
             {/* Floating Action Button avec menu déroulant */}
             <div className="flex justify-end" ref={actionMenuRef}>
                 <button
                     onClick={() => setShowActionMenu(!showActionMenu)}
-                    className="text-3xl  transition-all"
+                    className="text-3xl  transition-all hover:shadow-lg hover:bg-gray-200 cursor-pointer"
                 >
                     <FaRegPlusSquare />
                 </button>
@@ -85,12 +76,14 @@ export default function PublicationsPage() {
                             </Link>
                         </div>
 
-                        <button
-                            onClick={() => handleOpenFormEquip()}
-                            className="w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
-                        >
-                            équipement
-                        </button>
+                        <div className="w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors ">
+                            <Link
+                                href="/profil/publications/EquipementForm"
+                            >
+                                équipement
+                            </Link>
+                        </div>
+
                     </div>
                 )}
             </div>
@@ -101,24 +94,24 @@ export default function PublicationsPage() {
             <div className="flex gap-2 mb-6 overflow-x-auto">
                 <button
                     onClick={() => setActiveFilter("tous")}
-                    className={`px-6 py-2 rounded-full ${
-                        activeFilter === "tous" ? "bg-green-400" : "bg-gray-100"
+                    className={`px-6 py-2 rounded-full cursor-pointer ${
+                        activeFilter === "tous" ? "bg-green-400 hover:shadow-lg hover:bg-green-300" : "bg-gray-100 hover:shadow-lg hover:bg-gray-200 "
                     }`}
                 >
                     Tous
                 </button>
                 <button
                     onClick={() => setActiveFilter("logements")}
-                    className={`px-6 py-2 rounded-full ${
-                        activeFilter === "logements" ? "bg-green-400" : "bg-gray-100"
+                    className={`px-6 py-2 rounded-full cursor-pointer ${
+                        activeFilter === "logements" ? "bg-green-400 hover:shadow-lg hover:bg-green-300" : "bg-gray-100 hover:shadow-lg hover:bg-gray-200 "
                     }`}
                 >
                     Logements
                 </button>
                 <button
                     onClick={() => setActiveFilter("equipements")}
-                    className={`px-6 py-2 rounded-full ${
-                        activeFilter === "equipements" ? "bg-green-400" : "bg-gray-100"
+                    className={`px-6 py-2 rounded-full cursor-pointer ${
+                        activeFilter === "equipements" ? "bg-green-400 hover:shadow-lg hover:bg-green-300" : "bg-gray-100 hover:shadow-lg hover:bg-gray-200 "
                     }`}
                 >
                     Équipements
