@@ -3,6 +3,9 @@ import {FaCouch, FaParking, FaRecycle, FaSnowflake, FaWifi} from "react-icons/fa
 export const typeLogement=["appartement","Chambre","studios"]
 
 
+
+
+
 export const logements=[
     //Appartement 1
 
@@ -163,6 +166,24 @@ export const equipements=[
 ]
 
 
+export const notificationsLocataie = [
+    {
+        id: 1,
+        logement: logements[0],
+        message: "Votre annonce a expiré automatiquement après 30 jours.",
+        detail:
+            "Les annonces sont retirées de la plateforme après un mois pour garantir la fraîcheur des logements proposés.",
+        dateExpiration: "2025-05-01",
+    },
+    {
+        id: 2,
+        logement: logements[1],
+        message: "Votre annonce a expiré automatiquement après 30 jours.",
+        detail:
+            "Les annonces sont retirées de la plateforme après un mois pour garantir la fraîcheur des logements proposés.",
+        dateExpiration: "2025-05-10",
+    },
+];
 
 
 
