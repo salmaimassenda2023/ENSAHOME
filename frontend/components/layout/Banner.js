@@ -52,9 +52,9 @@ export default function Banner() {
                     <div className="flex flex-wrap gap-3 justify-end md:ml-auto">
                         {/* Bouton paramètres */}
                         <button
-                            onClick={() => handleTabChange("parametres")}
-                            className={`flex items-center space-x-2 rounded-full px-4 py-2 transition-colors ${
-                                activeTab === "parametres"
+                            onClick={() => handleTabChange("settings")}
+                            className={`flex items-center space-x-2 rounded-full px-4 py-2 transition-colors cursor-pointer ${
+                                activeTab === "settings"
                                     ? "bg-green-500 text-black"
                                     : "border hover:bg-gray-100"
                             }`}
@@ -66,7 +66,7 @@ export default function Banner() {
                         {/* Bouton publications */}
                         <button
                             onClick={() => handleTabChange("publications")}
-                            className={`flex items-center space-x-2 rounded-full px-4 py-2 transition-colors ${
+                            className={`flex items-center space-x-2 rounded-full px-4 py-2 transition-colors cursor-pointer ${
                                 activeTab === "publications"
                                     ? "bg-green-500 text-black"
                                     : "border hover:bg-gray-100"
@@ -79,7 +79,7 @@ export default function Banner() {
                         {/* Bouton notifications */}
                         <button
                             onClick={() => handleTabChange("notifications")}
-                            className={`flex items-center space-x-2 rounded-full px-4 py-2 transition-colors ${
+                            className={`flex items-center space-x-2 rounded-full px-4 py-2 transition-colors cursor-pointer ${
                                 activeTab === "notifications"
                                     ? "bg-green-500 text-black"
                                     : "border hover:bg-gray-100"
