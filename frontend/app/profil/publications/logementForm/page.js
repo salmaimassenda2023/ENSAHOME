@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LogementForm() {
+export default function LogementForm({ initialData = null, onSubmit, isEditing = false }) {
     const router = useRouter();
 
     // État pour gérer l'étape actuelle du formulaire
@@ -17,15 +17,15 @@ export default function LogementForm() {
 
     // Initialisation des états
     const [formData, setFormData] = useState({
-        type: "Appartement",
-        nombrePieces: "",
-        ville: "Khouribga",
-        quartier: "",
-        loyer: "",
-        description: "",
-        telephone: "",
-        nomProprietaire: "",
-        commodites: {
+        type: initialData?.type || "Appartement",
+        nombrePieces: initialData?.nombrePieces || "",
+        ville: initialData?.ville || "Khouribga",
+        quartier: initialData?.quartier || "",
+        loyer: initialData?.loyer || "",
+        description: initialData?.description || "",
+        telephone: initialData?.telephone || "",
+        nomProprietaire: initialData?.nomProprietaire || "",
+        commodites: initialData?.commodites || {
             wifi: false,
             parking: false,
             ascenseur: false,
@@ -33,7 +33,7 @@ export default function LogementForm() {
             meuble: false,
             eauChaude: false,
         },
-        photos: []
+        photos: initialData?.photos || []
     });
 
     // État pour gérer les erreurs de validation

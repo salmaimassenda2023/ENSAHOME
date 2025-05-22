@@ -144,7 +144,8 @@ export default function EquipementForm({ initialData = null, onSubmit, isEditing
     };
 
     return (
-        <div className="container mx-auto max-w-5xl">
+        <div className="container mx-auto max-w-5xl ">
+
             {!isEditing && (
                 <h1 className="text-3xl leading-tight text-green-600 text-center mb-9">
                     Partagez votre équipement avec des étudiants
@@ -246,7 +247,7 @@ export default function EquipementForm({ initialData = null, onSubmit, isEditing
                         </div>
 
                         {/* Boutons d'action */}
-                        <div className="flex justify-end mt-4 flex space-x-4 col-span-2">
+                        <div className="flex flex-items-center justify-center mt-5 flex space-x-4 col-span-2">
                             <div>
                                 <button
                                     type="submit"
@@ -261,7 +262,7 @@ export default function EquipementForm({ initialData = null, onSubmit, isEditing
                                     onClick={handleCancel}
                                     className="cursor-pointer px-6 py-3 border border-red-300 text-gray-700 hover:bg-red-200 font-medium rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                                 >
-                                    Annuler
+                                    Supprimer Définitivement
                                 </button>
                             </div>
                         </div>
