@@ -3,6 +3,7 @@ package com.example.ensahome_backend.model;
 import org.springframework.data.annotation.Id;
 import java.util.Date;
 
+
 public class PieceJustificative {
     @Id
     private String id;

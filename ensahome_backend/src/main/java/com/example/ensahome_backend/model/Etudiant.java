@@ -10,5 +10,7 @@ public class Etudiant {
     public void setNumEtudiant(String numEtudiant) { this.numEtudiant = numEtudiant; }
 
     public NiveauEtude getNiveau() { return niveau; }
-    public void setNiveau(NiveauEtude niveau) { this.niveau = niveau; }
+    public void setNiveau(NiveauEtude niveau) { 
+        this.niveau = niveau;
+     }
 } 

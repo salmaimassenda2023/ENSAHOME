@@ -8,25 +8,30 @@ import java.util.List;
 public class Logement {
     @Id
     private String id;
-    private boolean estDisponible;
+    private float loyer;
+    private String description;//
     private List<String> photos;
     private String adresse;
-    private int etage;
     private int nombrePieces;
-    private float loyer;
     private TypeLogement type;
-    private boolean ascenseur;
-    private List<String> equipements; // IDs d'Equipement
+    private int etage;
     private List<Commodite> commodites;
     private String proprietaireId; // ID du propriétaire
+    private String proximite;//ajouter d'apres le fichier json
+    private String ville;
+    
 
     public Logement() {}
+
+    public String getProximite() { return proximite; }
+    public void setProximite(String proximite) { this.proximite = proximite; }
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public boolean isEstDisponible() { return estDisponible; }
-    public void setEstDisponible(boolean estDisponible) { this.estDisponible = estDisponible; }
+   
+    public String getAdresee() { return adresse; }
+    public void setAdresee(String adresse) { this.adresse = adresse; }
 
     public List<String> getPhotos() { return photos; }
     public void setPhotos(List<String> photos) { this.photos = photos; }
@@ -46,15 +51,16 @@ public class Logement {
     public TypeLogement getType() { return type; }
     public void setType(TypeLogement type) { this.type = type; }
 
-    public boolean isAscenseur() { return ascenseur; }
-    public void setAscenseur(boolean ascenseur) { this.ascenseur = ascenseur; }
-
-    public List<String> getEquipements() { return equipements; }
-    public void setEquipements(List<String> equipements) { this.equipements = equipements; }
-
     public List<Commodite> getCommodites() { return commodites; }
     public void setCommodites(List<Commodite> commodites) { this.commodites = commodites; }
 
     public String getProprietaireId() { return proprietaireId; }
     public void setProprietaireId(String proprietaireId) { this.proprietaireId = proprietaireId; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getVille() { return ville; }
+    public void setVille(String ville) { this.ville = ville; }
+
 } 

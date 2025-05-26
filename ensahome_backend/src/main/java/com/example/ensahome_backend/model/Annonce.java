@@ -15,6 +15,7 @@ public class Annonce {
     private String userId; // ID de l'utilisateur (auteur)
     private String logementId; // ID du logement associé
 
+    
     public Annonce() {}
 
     public String getId() { return id; }
