@@ -8,12 +8,12 @@ import java.util.List;
 public class Equipement {
     @Id
     private String id;
-    private Boolean estDisponible;
+    private boolean disponibilite;
     private List<String> photos;
-    private Etat etas;
-    private String designation;
-    private String desc;
-    private float prix;
+    private Etat etat;
+    private String nom;
+    private String description;
+    private double prix;
     private String ville;
 
     public Equipement() {}
@@ -24,20 +24,20 @@ public class Equipement {
     public List<String> getPhotos() { return photos; }
     public void setPhotos(List<String> photos) { this.photos = photos; }
 
-    public Etat getEtas() { return etas; }
-    public void setEtas(Etat etas) { this.etas = etas; }
+    public Etat getEtat() { return etat; }
+    public void setEtat(Etat etat) { this.etat = etat; }
 
-    public String getDesignation() { return designation; }
-    public void setDesignation(String designation) { this.designation = designation; }
+    public String getNom() { return nom; }
+    public void setNom(String nom) { this.nom = nom; }
 
-    public String getDesc() { return desc; }
-    public void setDesc(String desc) { this.desc = desc; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public float getPrix() { return prix; }
-    public void setPrix(float prix) { this.prix = prix; }
+    public double getPrix() { return prix; }
+    public void setPrix(double prix) { this.prix = prix; }
 
-    public Boolean getEstDisponible() { return estDisponible; }
-    public void setEstDisponible(Boolean estDisponible) { this.estDisponible = estDisponible; }
+    public boolean isDisponibilite() { return disponibilite; }
+    public void setDisponibilite(boolean disponibilite) { this.disponibilite = disponibilite; }
 
     public String getVille() { return ville; }
     public void setVille(String ville) { this.ville = ville; }

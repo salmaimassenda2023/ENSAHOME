@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.domain.Sort;
 import java.util.List;
 
-
 public interface EquipementRepository extends MongoRepository<Equipement, String> {
     List<Equipement> findByNom(String nom);
     List<Equipement> findByDescription(String description);

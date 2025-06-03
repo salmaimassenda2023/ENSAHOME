@@ -2,6 +2,19 @@
 version: '3.8'
 
 services:
+  # Service Spring Boot
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    networks:
+      - mongodb-network
+    depends_on:
+      mongos:
+        condition: service_healthy
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongos:27017/ensahome?retryWrites=true&w=majority
+
   # =============================================
   # Configuration Servers (Replica Set)
   # Ces serveurs stockent les métadonnées du cluster et gèrent la répartition des données
@@ -230,21 +243,19 @@ services:
       - "27017:27017"
     networks:
       - mongodb-network
-    healthcheck:
-      test: mongosh --host mongos:27017 --eval "db.adminCommand('ping')" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
     depends_on:
-      init-config:
-        condition: service_completed_successfully
       config1:
         condition: service_healthy
       config2:
         condition: service_healthy
       config3:
         condition: service_healthy
+    healthcheck:
+      test: mongosh --host mongos:27017 --eval "db.adminCommand('ping')" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   mongo-importer:
     image: mongo:6.0
@@ -513,39 +524,160 @@ services:
       init-agadir:
         condition: service_completed_successfully
     command: >
-      /bin/bash -c "
-        echo 'Waiting for mongos to be ready...' &&
-        sleep 60 &&
+      mongosh --host mongos:27017 --eval '
+        sleep(60000);
+        print("Adding shards...");
+        sh.addShard("khouribgaRS/khouribga_shard1:27031");
+        sh.addShard("marrakechRS/marrakech_shard1:27041");
+        sh.addShard("agadirRS/agadir_shard1:27051");
         
-        echo 'Checking Khouribga replica set...' &&
-        mongosh --host khouribga_shard1:27031 --eval 'rs.status()' &&
+        print("Enabling sharding for ensahome database...");
+        sh.enableSharding("ensahome");
         
-        echo 'Checking Marrakech replica set...' &&
-        mongosh --host marrakech_shard1:27041 --eval 'rs.status()' &&
+        print("Sharding users collection...");
+        sh.shardCollection("ensahome.users", { ville: 1 });
         
-        echo 'Checking Agadir replica set...' &&
-        mongosh --host agadir_shard1:27051 --eval 'rs.status()' &&
+        print("Creating chunk splits...");
+        sh.splitAt("ensahome.users", { ville: "Agadir" });
+        sh.splitAt("ensahome.users", { ville: "Khouribga" });
+        sh.splitAt("ensahome.users", { ville: "Marrakech" });
         
-        echo 'Adding shards to cluster...' &&
-        mongosh --host mongos:27017 --eval '
-          print(\"Adding Khouribga shard...\");
-          sh.addShard(\"khouribgaRS/khouribga_shard1:27031\");
-          
-          print(\"Adding Marrakech shard...\");
-          sh.addShard(\"marrakechRS/marrakech_shard1:27041\");
-          
-          print(\"Adding Agadir shard...\");
-          sh.addShard(\"agadirRS/agadir_shard1:27051\");
-          
-          print(\"Verifying shards status...\");
-          sh.status();
-        ' &&
+        print("Moving chunks to appropriate shards...");
+        sh.moveChunk("ensahome.users", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.users", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.users", { ville: "Marrakech" }, "marrakechRS");
         
-        echo 'Shards initialization completed'
-      "
+        print("Waiting for balancer to complete...");
+        while (sh.isBalancerRunning()) {
+          print("Balancer is still running...");
+          sleep(1000);
+        }
+        
+        print("Verifying final distribution...");
+        printjson(db.getSiblingDB("ensahome").users.getShardDistribution());
+        print("Showing shard status...");
+        sh.status();
+      '
     networks:
       - mongodb-network
 
+  # MongoDB Config Server Initializer
+  mongo-config-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      config1:
+        condition: service_healthy
+      config2:
+        condition: service_healthy
+      config3:
+        condition: service_healthy
+    command: >
+      mongosh --host config1:27019 --eval '
+        rs.initiate({
+          _id: "configrs",
+          configsvr: true,
+          members: [
+            {_id: 0, host: "config1:27019"},
+            {_id: 1, host: "config2:27019"},
+            {_id: 2, host: "config3:27019"}
+          ]
+        })
+      '
+
+  # MongoDB Shard Initializer
+  mongo-shard-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      mongos:
+        condition: service_healthy
+    command: >
+      /bin/bash -c "
+        echo 'Waiting for mongos to be ready...' &&
+        sleep 30 &&
+        echo 'Initializing shards...' &&
+        mongosh --host mongos:27017 --eval '
+          sh.addShard(\"khouribgaRS/khouribga_shard1:27031,khouribga_shard2:27032,khouribga_shard3:27033\");
+          sh.addShard(\"marrakechRS/marrakech_shard1:27041,marrakech_shard2:27042,marrakech_shard3:27043\");
+          sh.addShard(\"agadirRS/agadir_shard1:27051\");
+          sh.enableSharding(\"ensahome\");
+          sh.shardCollection(\"ensahome.users\", {\"ville\": \"hashed\"});
+        '
+      "
+
+  # Khouribga Shard Initializer
+  khouribga-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      khouribga_shard1:
+        condition: service_healthy
+      khouribga_shard2:
+        condition: service_healthy
+      khouribga_shard3:
+        condition: service_healthy
+    command: >
+      mongosh --host khouribga_shard1:27031 --eval '
+        rs.initiate({
+          _id: "khouribgaRS",
+          members: [
+            {_id: 0, host: "khouribga_shard1:27031"},
+            {_id: 1, host: "khouribga_shard2:27032"},
+            {_id: 2, host: "khouribga_shard3:27033"}
+          ]
+        })
+      '
+
+  # Marrakech Shard Initializer
+  marrakech-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      marrakech_shard1:
+        condition: service_healthy
+      marrakech_shard2:
+        condition: service_healthy
+      marrakech_shard3:
+        condition: service_healthy
+    command: >
+      mongosh --host marrakech_shard1:27041 --eval '
+        rs.initiate({
+          _id: "marrakechRS",
+          members: [
+            {_id: 0, host: "marrakech_shard1:27041"},
+            {_id: 1, host: "marrakech_shard2:27042"},
+            {_id: 2, host: "marrakech_shard3:27043"}
+          ]
+        })
+      '
+
+  # Agadir Shard Initializer
+  agadir-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      agadir_shard1:
+        condition: service_healthy
+    command: >
+      mongosh --host agadir_shard1:27051 --eval '
+        rs.initiate({
+          _id: "agadirRS",
+          members: [
+            {_id: 0, host: "agadir_shard1:27051"}
+          ]
+        })
+      '
 
 networks:
   mongodb-network:

@@ -17,6 +17,7 @@ public class User {
 
     private String password;
     private String role; // ADMIN, STUDENT, TEACHER, STAFF
+    @Indexed
     private String ville; // KHOURIBGA, MARRAKECH, AGADIR
     private boolean active;
     private String nom;

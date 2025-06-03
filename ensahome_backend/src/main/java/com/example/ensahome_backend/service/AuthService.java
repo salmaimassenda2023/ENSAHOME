@@ -24,8 +24,8 @@ public class AuthService {
     private final String SECRET_KEY = "votre_cle_secrete_tres_longue_et_complexe";
     private final long EXPIRATION_TIME = 864_000_000; // 10 jours
 
-    public Map<String, Object> login(String emailOrUsername, String password) {
-        Optional<User> userOpt = userRepository.findByEmailOrUsernameAndPassword(emailOrUsername, emailOrUsername, password);
+    public Map<String, Object> login(String email, String password) {
+        Optional<User> userOpt = userRepository.findByEmailAndPassword(email, password);
         
         if (userOpt.isPresent()) {
             User user = userOpt.get();

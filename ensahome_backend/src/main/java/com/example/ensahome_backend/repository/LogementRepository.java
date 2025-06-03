@@ -8,23 +8,18 @@ import java.util.List;
 
 public interface LogementRepository extends MongoRepository<Logement, String> {
     List<Logement> findByProprietaireId(String proprietaireId);
+    List<Logement> findByLoyer(float loyer);
     List<Logement> findByEstDisponible(boolean estDisponible);
-    List<Logement> findByPrix(double prix);
-    List<Logement> findByPrixAndEstDisponible(double prix, boolean estDisponible);
     
     // Méthodes de tri
     List<Logement> findAllByOrderByLoyerAsc();
     List<Logement> findAllByOrderByLoyerDesc();
     List<Logement> findByType(TypeLogement type);
-    List<Logement> findByTypeAndEstDisponible(TypeLogement type, boolean estDisponible);
     List<Logement> findByTypeOrderByLoyerAsc(TypeLogement type);
     List<Logement> findByTypeOrderByLoyerDesc(TypeLogement type);
-
     
     // Méthodes de tri par commodité
-
     List<Logement> findByCommoditesContaining(Commodite commodite);
-    List<Logement> findByCommoditesContainingAndEstDisponible(Commodite commodite, boolean estDisponible);
     List<Logement> findByCommoditesContainingOrderByLoyerAsc(Commodite commodite);
     List<Logement> findByCommoditesContainingOrderByLoyerDesc(Commodite commodite);
     List<Logement> findByTypeAndCommoditesContaining(TypeLogement type, Commodite commodite);

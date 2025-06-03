@@ -19,9 +19,15 @@ public class Logement {
     private String proprietaireId; // ID du propriétaire
     private String proximite;//ajouter d'apres le fichier json
     private String ville;
+    private boolean estDisponible;
     
 
-    public Logement() {}
+    public Logement() {
+        this.estDisponible = true; // Par défaut, un nouveau logement est disponible
+    }
+
+    public boolean isEstDisponible() { return estDisponible; }
+    public void setEstDisponible(boolean estDisponible) { this.estDisponible = estDisponible; }
 
     public String getProximite() { return proximite; }
     public void setProximite(String proximite) { this.proximite = proximite; }

@@ -9,19 +9,15 @@ FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 # Définit le répertoire de travail dans le conteneur
 
-# Copier les fichiers de configuration Maven
+# Copier le pom.xml et télécharger les dépendances
 COPY pom.xml .
-# Copie le fichier pom.xml qui contient les dépendances Maven
+RUN mvn dependency:go-offline
 
+# Copier le code source
 COPY src ./src
-# Copie le code source de l'application dans le répertoire src
 
-# Build de l'application
-RUN mvn clean package -DskipTests
-# Exécute Maven pour compiler l'application
-# - clean : nettoie les fichiers générés précédemment
-# - package : compile et crée le fichier JAR
-# -DskipTests : ignore les tests pour accélérer le build
+# Package l'application
+RUN mvn package -DskipTests
 
 # =============================================
 # Étape 2: Création de l'image finale
@@ -29,6 +25,14 @@ RUN mvn clean package -DskipTests
 # =============================================
 FROM openjdk:17-jdk-slim
 # Utilise une image JRE légère basée sur OpenJDK 17
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+EXPOSE 8081
+
+CMD ["java", "-jar", "app.jar"]
 
 # Variables d'environnement pour la configuration MongoDB
 ENV MONGODB_CONFIG_SERVERS=config1:27021,config2:27022,config3:27023
