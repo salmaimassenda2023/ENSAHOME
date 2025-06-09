@@ -4,8 +4,6 @@ export const typeLogement=["appartement","Chambre","studios"]
 
 
 
-
-
 export const logements=[
     //Appartement 1
 
