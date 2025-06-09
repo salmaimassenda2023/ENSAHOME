@@ -2,8 +2,8 @@ package com.example.ensahome_backend.repository;
 
 import com.example.ensahome_backend.model.Equipement;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.domain.Sort;
 import java.util.List;
-
 
 public interface EquipementRepository extends MongoRepository<Equipement, String> {
     List<Equipement> findByNom(String nom);
@@ -13,4 +13,8 @@ public interface EquipementRepository extends MongoRepository<Equipement, String
     List<Equipement> findByNomAndDisponibilite(String nom, boolean disponibilite);
     List<Equipement> findByPrixAndDisponibilite(double prix, boolean disponibilite);
     List<Equipement> findByNomAndPrix(String nom, double prix);
+    
+    // Méthodes de tri
+    List<Equipement> findAllByOrderByPrixAsc();
+    List<Equipement> findAllByOrderByPrixDesc();
 } 

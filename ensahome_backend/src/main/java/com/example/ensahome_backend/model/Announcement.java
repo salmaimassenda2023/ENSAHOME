@@ -3,7 +3,6 @@ package com.example.ensahome_backend.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
-
 import java.time.LocalDateTime;
 
 @Document(collection = "announcements")
@@ -11,20 +10,20 @@ public class Announcement {
     @Id
     private String id;
 
+    @Indexed
+    private String ville;
     private String title;
-    private String content;
     private String authorId;
-    private String city; // KHOURIBGA, MARRAKECH, AGADIR
-    private String category; // GENERAL, ACADEMIC, EVENT, etc.
     private boolean active;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime expiresAt;
+    private LocalDateTime expiresAt;//expiration date apres 30 jours
+    private String logementId;
+    private String equipementId;
 
     // Constructors
     public Announcement() {
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.expiresAt = createdAt.plusDays(30);
     }
 
     // Getters and Setters
@@ -36,6 +35,14 @@ public class Announcement {
         this.id = id;
     }
 
+    public String getVille() {
+        return ville;
+    }
+
+    public void setVille(String ville) {
+        this.ville = ville;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -44,36 +51,12 @@ public class Announcement {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public String getAuthorId() {
         return authorId;
     }
 
     public void setAuthorId(String authorId) {
         this.authorId = authorId;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public boolean isActive() {
@@ -92,19 +75,27 @@ public class Announcement {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public LocalDateTime getExpiresAt() {
         return expiresAt;
     }
 
     public void setExpiresAt(LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public String getLogementId() {
+        return logementId;
+    }
+
+    public void setLogementId(String logementId) {
+        this.logementId = logementId;
+    }
+
+    public String getEquipementId() {
+        return equipementId;
+    }
+
+    public void setEquipementId(String equipementId) {
+        this.equipementId = equipementId;
     }
 } 

@@ -16,13 +16,10 @@ public class User {
     private String email;
 
     private String password;
-    private String firstName;
-    private String lastName;
     private String role; // ADMIN, STUDENT, TEACHER, STAFF
-    private String city; // KHOURIBGA, MARRAKECH, AGADIR
+    @Indexed
+    private String ville; // KHOURIBGA, MARRAKECH, AGADIR
     private boolean active;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private String nom;
     private String prenom;
     private String villeEcole;
@@ -32,6 +29,9 @@ public class User {
     private Etudiant etudiant; // null si non étudiant
     private ProprietaireLogement proprietaireLogement; // null si non proprio
 
+    //on peux les ajoutées meme si elles ne sont pas dans les classes
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     // Constructors
     public User() {
         this.createdAt = LocalDateTime.now();
@@ -63,21 +63,6 @@ public class User {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getRole() {
         return role;
@@ -87,12 +72,12 @@ public class User {
         this.role = role;
     }
 
-    public String getCity() {
-        return city;
+    public String getVille() {
+        return ville;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setVille(String ville) {
+        this.ville = ville;
     }
 
     public boolean isActive() {

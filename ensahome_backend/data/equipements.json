@@ -1,0 +1,29 @@
+[
+  {
+    "disponibilite": true,
+    "photos": ["equip1.jpg", "equip2.jpg"],
+    "etat": "NEUF",
+    "nom": "Bureau d'étudiant",
+    "description": "Bureau moderne avec rangements",
+    "prix": 500,
+    "ville": "Khouribga"
+  },
+  {
+    "disponibilite": true,
+    "photos": ["equip3.jpg", "equip4.jpg"],
+    "etat": "BON",
+    "nom": "Chaise de bureau ergonomique",
+    "description": "Chaise confortable pour longues sessions d'étude",
+    "prix": 350,
+    "ville": "Marrakech"
+  },
+  {
+    "disponibilite": true,
+    "photos": ["equip5.jpg", "equip6.jpg"],
+    "etat": "NEUF",
+    "nom": "Lampe de bureau LED",
+    "description": "Lampe LED réglable avec chargeur USB",
+    "prix": 200,
+    "ville": "Agadir"
+  }
+] 

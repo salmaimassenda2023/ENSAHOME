@@ -1,0 +1,751 @@
+services:
+  # Service Spring Boot
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    networks:
+      - mongodb-network
+    depends_on:
+      mongos:
+        condition: service_healthy
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongos:27017/ensahome?retryWrites=true&w=majority
+
+  # =============================================
+  # Configuration Servers (Replica Set)
+  # Ces serveurs stockent les métadonnées du cluster et gèrent la répartition des données
+  # =============================================
+  config1:
+    image: mongo:6.0
+    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all
+    volumes:
+      - config1_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host config1:27019 --eval "db.adminCommand('ping')" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  config2:
+    image: mongo:6.0
+    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all
+    volumes:
+      - config2_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host config2:27019 --eval "db.adminCommand('ping')" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      config1:
+        condition: service_healthy
+
+  config3:
+    image: mongo:6.0
+    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all
+    volumes:
+      - config3_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host config3:27019 --eval "db.adminCommand('ping')" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      config2:
+        condition: service_healthy
+
+  # =============================================
+  # ENSA Khouribga Shard
+  # Gère les données spécifiques à l'ENSA Khouribga
+  # =============================================
+  khouribga_shard1:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet khouribgaRS --port 27031 --dbpath /data/db --bind_ip_all
+    volumes:
+      - khouribga_shard1_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host khouribga_shard1:27031 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      config3:
+        condition: service_healthy
+
+  khouribga_shard2:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet khouribgaRS --port 27032 --dbpath /data/db --bind_ip_all
+    volumes:
+      - khouribga_shard2_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host khouribga_shard2:27032 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      khouribga_shard1:
+        condition: service_healthy
+
+  khouribga_shard3:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet khouribgaRS --port 27033 --dbpath /data/db --bind_ip_all
+    volumes:
+      - khouribga_shard3_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host khouribga_shard3:27033 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      khouribga_shard2:
+        condition: service_healthy
+
+  # =============================================
+  # ENSA Marrakech Shard
+  # Gère les données spécifiques à l'ENSA Marrakech
+  # =============================================
+  marrakech_shard1:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet marrakechRS --port 27041 --dbpath /data/db --bind_ip_all
+    volumes:
+      - marrakech_shard1_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host marrakech_shard1:27041 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      khouribga_shard3:
+        condition: service_healthy
+
+  marrakech_shard2:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet marrakechRS --port 27042 --dbpath /data/db --bind_ip_all
+    volumes:
+      - marrakech_shard2_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host marrakech_shard2:27042 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      marrakech_shard1:
+        condition: service_healthy
+
+  marrakech_shard3:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet marrakechRS --port 27043 --dbpath /data/db --bind_ip_all
+    volumes:
+      - marrakech_shard3_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host marrakech_shard3:27043 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      marrakech_shard2:
+        condition: service_healthy
+
+  # =============================================
+  # ENSA Agadir Shard
+  # Gère les données spécifiques à l'ENSA Agadir
+  # =============================================
+  agadir_shard1:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet agadirRS --port 27051 --dbpath /data/db --bind_ip_all
+    volumes:
+      - agadir_shard1_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host agadir_shard1:27051 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      marrakech_shard3:
+        condition: service_healthy
+
+  agadir_shard2:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet agadirRS --port 27052 --dbpath /data/db --bind_ip_all
+    volumes:
+      - agadir_shard2_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host agadir_shard2:27052 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      agadir_shard1:
+        condition: service_healthy
+
+  agadir_shard3:
+    image: mongo:6.0
+    command: mongod --shardsvr --replSet agadirRS --port 27053 --dbpath /data/db --bind_ip_all
+    volumes:
+      - agadir_shard3_data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: mongosh --host agadir_shard3:27053 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      agadir_shard2:
+        condition: service_healthy
+
+  # =============================================
+  # MongoDB Router (mongos)
+  # Sert d'interface entre l'application et le cluster
+  # =============================================
+  mongos:
+    image: mongo:6.0
+    command: mongos --configdb configrs/config1:27019,config2:27019,config3:27019 --bind_ip_all
+    ports:
+      - "27017:27017"
+    networks:
+      - mongodb-network
+    depends_on:
+      config1:
+        condition: service_healthy
+      config2:
+        condition: service_healthy
+      config3:
+        condition: service_healthy
+    healthcheck:
+      test: mongosh --host mongos:27017 --eval "db.adminCommand('ping')" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  mongo-importer:
+    image: mongo:6.0
+    depends_on:
+      mongos:
+        condition: service_healthy
+    volumes:
+      - ./data/users.json:/data/users.json
+      - ./data/logements.json:/data/logements.json
+      - ./data/equipements.json:/data/equipements.json
+    command: >
+      bash -c "
+        echo 'Waiting for mongos to be ready...' &&
+        sleep 30 &&
+        echo 'Enabling sharding for ensahome database...' &&
+        mongosh --host mongos:27017 --eval '
+          sh.enableSharding(\"ensahome\");
+          sh.shardCollection(\"ensahome.users\", { ville: 1 });
+          sh.shardCollection(\"ensahome.logements\", { ville: 1 });
+          sh.shardCollection(\"ensahome.equipements\", { ville: 1 });
+        ' &&
+        echo 'Importing users.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection users --file /data/users.json --jsonArray &&
+        echo 'Importing logements.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection logements --file /data/logements.json --jsonArray &&
+        echo 'Importing equipements.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection equipements --file /data/equipements.json --jsonArray &&
+        echo 'Import completed successfully'
+      "
+    networks:
+      - mongodb-network
+
+  # =============================================
+  # Service d'initialisation
+  # Configure le cluster et initialise les shards
+  # =============================================
+  init-config:
+    image: mongo:6.0
+    depends_on:
+      config1:
+        condition: service_healthy
+      config2:
+        condition: service_healthy
+      config3:
+        condition: service_healthy
+    command: >
+      mongosh "mongodb://config1:27019" --eval "
+        try {
+          if (rs.status().ok === 1) {
+            print('Replica set already initialized');
+            quit();
+          }
+        } catch (e) {
+          print('Initializing replica set...');
+        }
+        
+        rs.initiate({ 
+          _id: 'configrs', 
+          configsvr: true, 
+          members: [ 
+            { _id: 0, host: 'config1:27019' }, 
+            { _id: 1, host: 'config2:27019' }, 
+            { _id: 2, host: 'config3:27019' } 
+          ] 
+        });
+        
+        print('Waiting for replica set to initialize...');
+        
+        let attempts = 0;
+        while (attempts < 12) {
+          try {
+            let status = rs.status();
+            if (status.ok === 1 && status.members.some(m => m.state === 1)) {
+              print('Replica set initialized successfully with a primary');
+              printjson(status);
+              quit();
+            }
+          } catch (e) {
+            print('Still waiting for replica set to initialize...');
+          }
+          
+          sleep(10000);
+          attempts++;
+        }
+        
+        print('Failed to initialize replica set after 12 attempts');
+        quit(1);
+      "
+    networks:
+      - mongodb-network
+
+  init-khouribga:
+    image: mongo:6.0
+    depends_on:
+      khouribga_shard1:
+        condition: service_healthy
+      khouribga_shard2:
+        condition: service_healthy
+      khouribga_shard3:
+        condition: service_healthy
+    command: >
+      mongosh "mongodb://khouribga_shard1:27031" --eval "
+        print('Waiting for Khouribga shard members to be ready...');
+        sleep(30000);
+        
+        try {
+          if (rs.status().ok === 1) {
+            print('Khouribga replica set already initialized');
+            quit();
+          }
+        } catch (e) {
+          print('Initializing Khouribga replica set...');
+        }
+        
+        rs.initiate({
+          _id: 'khouribgaRS',
+          members: [
+            { _id: 0, host: 'khouribga_shard1:27031' },
+            { _id: 1, host: 'khouribga_shard2:27032' },
+            { _id: 2, host: 'khouribga_shard3:27033' }
+          ]
+        });
+        
+        print('Waiting for Khouribga replica set to elect a primary...');
+        
+        let attempts = 0;
+        while (attempts < 12) {
+          try {
+            let status = rs.status();
+            if (status.ok === 1 && status.members.some(m => m.state === 1)) {
+              print('Khouribga primary elected successfully');
+              printjson(status);
+              quit();
+            }
+          } catch (e) {
+            print('Still waiting for Khouribga primary...');
+          }
+          
+          sleep(10000);
+          attempts++;
+        }
+        
+        print('Failed to elect a primary for Khouribga replica set after 12 attempts');
+        quit(1);
+      "
+    networks:
+      - mongodb-network
+
+  init-marrakech:
+    image: mongo:6.0
+    depends_on:
+      init-khouribga:
+        condition: service_completed_successfully
+      marrakech_shard1:
+        condition: service_healthy
+      marrakech_shard2:
+        condition: service_healthy
+      marrakech_shard3:
+        condition: service_healthy
+    command: >
+      /bin/bash -c "
+      echo 'Waiting for Marrakech shard members to be ready...' &&
+      sleep 30 &&
+      
+      echo 'Initializing Marrakech shard replica set...' &&
+      mongosh --host marrakech_shard1:27041 --eval '
+        try {
+          rs.status();
+          print(\"Marrakech replica set already initialized\");
+        } catch (e) {
+          rs.initiate({
+            _id: \"marrakechRS\",
+            members: [
+              { _id: 0, host: \"marrakech_shard1:27041\" },
+              { _id: 1, host: \"marrakech_shard2:27042\" },
+              { _id: 2, host: \"marrakech_shard3:27043\" }
+            ]
+          });
+          print(\"Marrakech replica set initialized\");
+        }
+      ' &&
+      
+      echo 'Waiting for Marrakech replica set to elect a primary...' &&
+      sleep 30 &&
+      
+      for i in {1..12}; do
+        echo \"Checking primary status... Attempt ${i}/12\" &&
+        if mongosh --host marrakech_shard1:27041 --eval 'printjson(rs.status().members.some(function(m) { return m.state === 1; }))' --quiet | grep -q true; then
+          echo 'Marrakech primary elected successfully' &&
+          mongosh --host marrakech_shard1:27041 --eval 'rs.status()' &&
+          echo 'Marrakech replica set initialized successfully' &&
+          exit 0;
+        fi &&
+        
+        if [ $i -eq 12 ]; then
+          echo 'Failed to elect a primary for Marrakech replica set after 12 attempts' &&
+          exit 1;
+        fi &&
+        
+        echo \"Still waiting for Marrakech primary... Attempt ${i}/12\" &&
+        sleep 10;
+      done
+      "
+    networks:
+      - mongodb-network
+
+  init-agadir:
+    image: mongo:6.0
+    depends_on:
+      init-marrakech:
+        condition: service_completed_successfully
+      agadir_shard1:
+        condition: service_healthy
+      agadir_shard2:
+        condition: service_healthy
+      agadir_shard3:
+        condition: service_healthy
+    command: >
+      /bin/bash -c "
+      echo 'Waiting for Agadir shard members to be ready...' &&
+      sleep 30 &&
+      
+      echo 'Initializing Agadir shard replica set...' &&
+      mongosh --host agadir_shard1:27051 --eval '
+        try {
+          rs.status();
+          print(\"Agadir replica set already initialized\");
+        } catch (e) {
+          rs.initiate({
+            _id: \"agadirRS\",
+            members: [
+              { _id: 0, host: \"agadir_shard1:27051\" },
+              { _id: 1, host: \"agadir_shard2:27052\" },
+              { _id: 2, host: \"agadir_shard3:27053\" }
+            ]
+          });
+          print(\"Agadir replica set initialized\");
+        }
+      ' &&
+      
+      echo 'Waiting for Agadir replica set to elect a primary...' &&
+      sleep 30 &&
+      
+      for i in {1..12}; do
+        echo \"Checking primary status... Attempt ${i}/12\" &&
+        if mongosh --host agadir_shard1:27051 --eval 'printjson(rs.status().members.some(function(m) { return m.state === 1; }))' --quiet | grep -q true; then
+          echo 'Agadir primary elected successfully' &&
+          mongosh --host agadir_shard1:27051 --eval 'rs.status()' &&
+          echo 'Agadir replica set initialized successfully' &&
+          exit 0;
+        fi &&
+        
+        if [ $i -eq 12 ]; then
+          echo 'Failed to elect a primary for Agadir replica set after 12 attempts' &&
+          exit 1;
+        fi &&
+        
+        echo \"Still waiting for Agadir primary... Attempt ${i}/12\" &&
+        sleep 10;
+      done
+      "
+    networks:
+      - mongodb-network
+
+  init-shards:
+    image: mongo:6.0
+    depends_on:
+      mongos:
+        condition: service_healthy
+      init-khouribga:
+        condition: service_completed_successfully
+      init-marrakech:
+        condition: service_completed_successfully
+      init-agadir:
+        condition: service_completed_successfully
+    command: >
+      mongosh --host mongos:27017 --eval '
+        sleep(60000);
+        print("Adding shards...");
+        sh.addShard("khouribgaRS/khouribga_shard1:27031");
+        sh.addShard("marrakechRS/marrakech_shard1:27041");
+        sh.addShard("agadirRS/agadir_shard1:27051");
+        
+        print("Enabling sharding for ensahome database...");
+        sh.enableSharding("ensahome");
+        
+        print("Sharding users collection...");
+        sh.shardCollection("ensahome.users", { ville: 1 });
+        sh.shardCollection("ensahome.logements", { ville: 1 });
+        sh.shardCollection("ensahome.equipements", { ville: 1 });
+        sh.shardCollection("ensahome.notifications", { ville: 1 });
+        sh.shardCollection("ensahome.announcements", { ville: 1 });
+        
+        
+        print("Creating chunk splits...");
+        # Users
+        sh.splitAt("ensahome.users", { ville: "Agadir" });
+        sh.splitAt("ensahome.users", { ville: "Khouribga" });
+        sh.splitAt("ensahome.users", { ville: "Marrakech" });
+        
+        # Logements
+        sh.splitAt("ensahome.logements", { ville: "Agadir" });
+        sh.splitAt("ensahome.logements", { ville: "Khouribga" });
+        sh.splitAt("ensahome.logements", { ville: "Marrakech" });
+        
+        # Equipements
+        sh.splitAt("ensahome.equipements", { ville: "Agadir" });
+        sh.splitAt("ensahome.equipements", { ville: "Khouribga" });
+        sh.splitAt("ensahome.equipements", { ville: "Marrakech" });
+
+        # Notifications
+        sh.splitAt("ensahome.notifications", { ville: "Agadir" });
+        sh.splitAt("ensahome.notifications", { ville: "Khouribga" });
+        sh.splitAt("ensahome.notifications", { ville: "Marrakech" });
+
+
+        # Announcements
+        sh.splitAt("ensahome.announcements", { ville: "Agadir" });
+        sh.splitAt("ensahome.announcements", { ville: "Khouribga" });
+        sh.splitAt("ensahome.announcements", { ville: "Marrakech" });
+
+
+        print("Moving chunks to appropriate shards...");
+        sh.moveChunk("ensahome.users", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.users", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.users", { ville: "Marrakech" }, "marrakechRS");
+        
+        sh.moveChunk("ensahome.logements", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.logements", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.logements", { ville: "Marrakech" }, "marrakechRS");
+        
+        sh.moveChunk("ensahome.equipements", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.equipements", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.equipements", { ville: "Marrakech" }, "marrakechRS");
+
+        sh.moveChunk("ensahome.notifications", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.notifications", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.notifications", { ville: "Marrakech" }, "marrakechRS");
+        
+        sh.moveChunk("ensahome.announcements", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.announcements", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.announcements", { ville: "Marrakech" }, "marrakechRS");
+
+        print("Waiting for balancer to complete...");
+        while (sh.isBalancerRunning()) {
+          print("Balancer is still running...");
+          sleep(1000);
+        }
+        
+        print("Verifying final distribution...");
+        printjson(db.getSiblingDB("ensahome").users.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").logements.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").equipements.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").notifications.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").announcements.getShardDistribution());
+        print("Showing shard status...");
+        sh.status();
+      '
+    networks:
+      - mongodb-network
+
+  # MongoDB Config Server Initializer
+  mongo-config-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      config1:
+        condition: service_healthy
+      config2:
+        condition: service_healthy
+      config3:
+        condition: service_healthy
+    command: >
+      mongosh --host config1:27019 --eval '
+        rs.initiate({
+          _id: "configrs",
+          configsvr: true,
+          members: [
+            {_id: 0, host: "config1:27019"},
+            {_id: 1, host: "config2:27019"},
+            {_id: 2, host: "config3:27019"}
+          ]
+        })
+      '
+
+  # MongoDB Shard Initializer
+  mongo-shard-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      mongos:
+        condition: service_healthy
+    command: >
+      /bin/bash -c "
+        echo 'Waiting for mongos to be ready...' &&
+        sleep 30 &&
+        echo 'Initializing shards...' &&
+        mongosh --host mongos:27017 --eval '
+          sh.addShard(\"khouribgaRS/khouribga_shard1:27031,khouribga_shard2:27032,khouribga_shard3:27033\");
+          sh.addShard(\"marrakechRS/marrakech_shard1:27041,marrakech_shard2:27042,marrakech_shard3:27043\");
+          sh.addShard(\"agadirRS/agadir_shard1:27051\");
+          sh.enableSharding(\"ensahome\");
+          sh.shardCollection(\"ensahome.users\", {\"ville\": \"hashed\"});
+        '
+      "
+
+  # Khouribga Shard Initializer
+  khouribga-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      khouribga_shard1:
+        condition: service_healthy
+      khouribga_shard2:
+        condition: service_healthy
+      khouribga_shard3:
+        condition: service_healthy
+    command: >
+      mongosh --host khouribga_shard1:27031 --eval '
+        rs.initiate({
+          _id: "khouribgaRS",
+          members: [
+            {_id: 0, host: "khouribga_shard1:27031"},
+            {_id: 1, host: "khouribga_shard2:27032"},
+            {_id: 2, host: "khouribga_shard3:27033"}
+          ]
+        })
+      '
+
+  # Marrakech Shard Initializer
+  marrakech-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      marrakech_shard1:
+        condition: service_healthy
+      marrakech_shard2:
+        condition: service_healthy
+      marrakech_shard3:
+        condition: service_healthy
+    command: >
+      mongosh --host marrakech_shard1:27041 --eval '
+        rs.initiate({
+          _id: "marrakechRS",
+          members: [
+            {_id: 0, host: "marrakech_shard1:27041"},
+            {_id: 1, host: "marrakech_shard2:27042"},
+            {_id: 2, host: "marrakech_shard3:27043"}
+          ]
+        })
+      '
+
+  # Agadir Shard Initializer
+  agadir-init:
+    image: mongo:6.0
+    restart: "no"
+    networks:
+      - mongodb-network
+    depends_on:
+      agadir_shard1:
+        condition: service_healthy
+    command: >
+      mongosh --host agadir_shard1:27051 --eval '
+        rs.initiate({
+          _id: "agadirRS",
+          members: [
+            {_id: 0, host: "agadir_shard1:27051"}
+          ]
+        })
+      '
+
+networks:
+  mongodb-network:
+    driver: bridge
+
+volumes:
+  config1_data:
+  config2_data:
+  config3_data:
+  khouribga_shard1_data:
+  khouribga_shard2_data:
+  khouribga_shard3_data:
+  marrakech_shard1_data:
+  marrakech_shard2_data:
+  marrakech_shard3_data:
+  agadir_shard1_data:
+  agadir_shard2_data:
+  agadir_shard3_data: 
