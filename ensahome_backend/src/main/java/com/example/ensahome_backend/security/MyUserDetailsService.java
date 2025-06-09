@@ -1,5 +1,7 @@
 package com.example.ensahome_backend.security;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +22,32 @@ public class MyUserDetailsService implements UserDetailsService {
         User user = userRepo.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
-        return new UserPrincipal(user);
-    }
+        return new CustomUserDetails(
+            user.getId(),                 // <-- ID réel
+            user.getEmail(),             // username
+            user.getPassword(),
+            new ArrayList<>()            // ou authorities
+        );
+        }
 }
+
+
+// @Service
+// public class MyUserDetailsService implements UserDetailsService {
+
+//     @Autowired
+//     private UserRepository userRepository; // ou ton repo MongoDB
+
+//     @Override
+//     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//         User user = userRepository.findByEmail(username)
+//                      .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+//         return new CustomUserDetails(
+//             user.getId(),                 // <-- ID réel
+//             user.getEmail(),             // username
+//             user.getPassword(),
+//             new ArrayList<>()            // ou authorities
+//         );
+//     }
+// }
