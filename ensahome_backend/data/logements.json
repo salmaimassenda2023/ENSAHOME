@@ -1,0 +1,44 @@
+[
+  {
+    "loyer": 2500,
+    "description": "Studio moderne au centre-ville",
+    "photos": ["photo1.jpg", "photo2.jpg"],
+    "adresse": "123 Rue Hassan II",
+    "nombrePieces": 1,
+    "type": "STUDIO",
+    "etage": 2,
+    "commodites": ["INTERNET", "CLIMATISATION", "PARKING"],
+    "proprietaireId": "user1",
+    "proximite": "Centre-ville, 5 min de l'ENSA",
+    "ville": "Khouribga",
+    "estDisponible": true
+  },
+  {
+    "loyer": 3500,
+    "description": "Appartement 3 pièces avec balcon",
+    "photos": ["photo3.jpg", "photo4.jpg"],
+    "adresse": "45 Avenue Mohammed V",
+    "nombrePieces": 3,
+    "type": "APPARTEMENT",
+    "etage": 3,
+    "commodites": ["INTERNET", "CLIMATISATION", "PARKING", "ASCENSEUR"],
+    "proprietaireId": "user2",
+    "proximite": "Proche de l'ENSA, 10 min à pied",
+    "ville": "Marrakech",
+    "estDisponible": true
+  },
+  {
+    "loyer": 2800,
+    "description": "Studio rénové avec vue sur la mer",
+    "photos": ["photo5.jpg", "photo6.jpg"],
+    "adresse": "78 Boulevard Anfa",
+    "nombrePieces": 1,
+    "type": "STUDIO",
+    "etage": 4,
+    "commodites": ["INTERNET", "CLIMATISATION", "PARKING", "ASCENSEUR"],
+    "proprietaireId": "user3",
+    "proximite": "5 min de la plage, 15 min de l'ENSA",
+    "ville": "Agadir",
+    "estDisponible": true
+  }
+] 

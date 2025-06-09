@@ -9,7 +9,7 @@ public class Logement {
     @Id
     private String id;
     private float loyer;
-    private String description;//
+    private String description;
     private List<String> photos;
     private String adresse;
     private int nombrePieces;
@@ -17,9 +17,10 @@ public class Logement {
     private int etage;
     private List<Commodite> commodites;
     private String proprietaireId; // ID du propriétaire
-    private String proximite;//ajouter d'apres le fichier json
+    private String proximite;
     private String ville;
     private boolean estDisponible;
+    private String userId;
     
 
     public Logement() {
@@ -69,4 +70,11 @@ public class Logement {
     public String getVille() { return ville; }
     public void setVille(String ville) { this.ville = ville; }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 } 

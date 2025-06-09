@@ -1,6 +1,3 @@
-# Version de Docker Compose utilisée
-version: '3.8'
-
 services:
   # Service Spring Boot
   app:
@@ -263,7 +260,9 @@ services:
       mongos:
         condition: service_healthy
     volumes:
-      - ./users.json:/data/users.json
+      - ./data/users.json:/data/users.json
+      - ./data/logements.json:/data/logements.json
+      - ./data/equipements.json:/data/equipements.json
     command: >
       bash -c "
         echo 'Waiting for mongos to be ready...' &&
@@ -272,9 +271,15 @@ services:
         mongosh --host mongos:27017 --eval '
           sh.enableSharding(\"ensahome\");
           sh.shardCollection(\"ensahome.users\", { ville: 1 });
+          sh.shardCollection(\"ensahome.logements\", { ville: 1 });
+          sh.shardCollection(\"ensahome.equipements\", { ville: 1 });
         ' &&
         echo 'Importing users.json...' &&
         mongoimport --host mongos:27017 --db ensahome --collection users --file /data/users.json --jsonArray &&
+        echo 'Importing logements.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection logements --file /data/logements.json --jsonArray &&
+        echo 'Importing equipements.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection equipements --file /data/equipements.json --jsonArray &&
         echo 'Import completed successfully'
       "
     networks:
@@ -536,17 +541,61 @@ services:
         
         print("Sharding users collection...");
         sh.shardCollection("ensahome.users", { ville: 1 });
+        sh.shardCollection("ensahome.logements", { ville: 1 });
+        sh.shardCollection("ensahome.equipements", { ville: 1 });
+        sh.shardCollection("ensahome.notifications", { ville: 1 });
+        sh.shardCollection("ensahome.announcements", { ville: 1 });
+        
         
         print("Creating chunk splits...");
+        # Users
         sh.splitAt("ensahome.users", { ville: "Agadir" });
         sh.splitAt("ensahome.users", { ville: "Khouribga" });
         sh.splitAt("ensahome.users", { ville: "Marrakech" });
         
+        # Logements
+        sh.splitAt("ensahome.logements", { ville: "Agadir" });
+        sh.splitAt("ensahome.logements", { ville: "Khouribga" });
+        sh.splitAt("ensahome.logements", { ville: "Marrakech" });
+        
+        # Equipements
+        sh.splitAt("ensahome.equipements", { ville: "Agadir" });
+        sh.splitAt("ensahome.equipements", { ville: "Khouribga" });
+        sh.splitAt("ensahome.equipements", { ville: "Marrakech" });
+
+        # Notifications
+        sh.splitAt("ensahome.notifications", { ville: "Agadir" });
+        sh.splitAt("ensahome.notifications", { ville: "Khouribga" });
+        sh.splitAt("ensahome.notifications", { ville: "Marrakech" });
+
+
+        # Announcements
+        sh.splitAt("ensahome.announcements", { ville: "Agadir" });
+        sh.splitAt("ensahome.announcements", { ville: "Khouribga" });
+        sh.splitAt("ensahome.announcements", { ville: "Marrakech" });
+
+
         print("Moving chunks to appropriate shards...");
         sh.moveChunk("ensahome.users", { ville: "Agadir" }, "agadirRS");
         sh.moveChunk("ensahome.users", { ville: "Khouribga" }, "khouribgaRS");
         sh.moveChunk("ensahome.users", { ville: "Marrakech" }, "marrakechRS");
         
+        sh.moveChunk("ensahome.logements", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.logements", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.logements", { ville: "Marrakech" }, "marrakechRS");
+        
+        sh.moveChunk("ensahome.equipements", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.equipements", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.equipements", { ville: "Marrakech" }, "marrakechRS");
+
+        sh.moveChunk("ensahome.notifications", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.notifications", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.notifications", { ville: "Marrakech" }, "marrakechRS");
+        
+        sh.moveChunk("ensahome.announcements", { ville: "Agadir" }, "agadirRS");
+        sh.moveChunk("ensahome.announcements", { ville: "Khouribga" }, "khouribgaRS");
+        sh.moveChunk("ensahome.announcements", { ville: "Marrakech" }, "marrakechRS");
+
         print("Waiting for balancer to complete...");
         while (sh.isBalancerRunning()) {
           print("Balancer is still running...");
@@ -555,6 +604,10 @@ services:
         
         print("Verifying final distribution...");
         printjson(db.getSiblingDB("ensahome").users.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").logements.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").equipements.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").notifications.getShardDistribution());
+        printjson(db.getSiblingDB("ensahome").announcements.getShardDistribution());
         print("Showing shard status...");
         sh.status();
       '

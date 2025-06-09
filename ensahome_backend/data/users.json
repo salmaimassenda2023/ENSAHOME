@@ -6,13 +6,5 @@
     { "nom": "Youssef", "ville": "Khouribga", "email": "youssef@example.com" },
     { "nom": "Amina", "ville": "Agadir", "email": "amina@example.com" },
     { "nom": "Hassan", "ville": "Marrakech", "email": "hassan@example.com" },
-    { "nom": "Nour", "ville": "Khouribga", "email": "nour@example.com" },
-    { "nom": "Ilyas", "ville": "Marrakech", "email": "ilyas@example.com" },
-    { "nom": "Lina", "ville": "Khouribga", "email": "lina@example.com" },
-    { "nom": "Youssef", "ville": "Agadir", "email": "youssef@example.com" },
-    { "nom": "Amina", "ville": "Marrakech", "email": "amina@example.com" },
-    { "nom": "Hassan", "ville": "Khouribga", "email": "hassan@example.com" },
-    { "nom": "Nour", "ville": "Agadir", "email": "nour@example.com" }
-    
-    
+    { "nom": "Nour", "ville": "Khouribga", "email": "nour@example.com" }
 ] 

@@ -10,6 +10,8 @@ public class Announcement {
     @Id
     private String id;
 
+    @Indexed
+    private String ville;
     private String title;
     private String authorId;
     private boolean active;
@@ -31,6 +33,14 @@ public class Announcement {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getVille() {
+        return ville;
+    }
+
+    public void setVille(String ville) {
+        this.ville = ville;
     }
 
     public String getTitle() {
