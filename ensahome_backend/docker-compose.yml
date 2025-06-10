@@ -3,7 +3,7 @@ services:
   app:
     build: .
     ports:
-      - "8081:8081"
+      - "8085:8085"
     networks:
       - mongodb-network
     depends_on:
@@ -18,48 +18,48 @@ services:
   # =============================================
   config1:
     image: mongo:6.0
-    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all
+    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all --setParameter logComponentVerbosity='{command:2}'
     volumes:
       - config1_data:/data/db
     networks:
       - mongodb-network
     healthcheck:
       test: mongosh --host config1:27019 --eval "db.adminCommand('ping')" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
 
   config2:
     image: mongo:6.0
-    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all
+    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all --setParameter logComponentVerbosity='{command:2}'
     volumes:
       - config2_data:/data/db
     networks:
       - mongodb-network
     healthcheck:
       test: mongosh --host config2:27019 --eval "db.adminCommand('ping')" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     depends_on:
       config1:
         condition: service_healthy
 
   config3:
     image: mongo:6.0
-    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all
+    command: mongod --configsvr --replSet configrs --port 27019 --bind_ip_all --setParameter logComponentVerbosity='{command:2}'
     volumes:
       - config3_data:/data/db
     networks:
       - mongodb-network
     healthcheck:
       test: mongosh --host config3:27019 --eval "db.adminCommand('ping')" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     depends_on:
       config2:
         condition: service_healthy
@@ -77,10 +77,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host khouribga_shard1:27031 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       config3:
         condition: service_healthy
@@ -94,10 +94,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host khouribga_shard2:27032 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       khouribga_shard1:
         condition: service_healthy
@@ -111,10 +111,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host khouribga_shard3:27033 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       khouribga_shard2:
         condition: service_healthy
@@ -132,10 +132,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host marrakech_shard1:27041 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       khouribga_shard3:
         condition: service_healthy
@@ -149,10 +149,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host marrakech_shard2:27042 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       marrakech_shard1:
         condition: service_healthy
@@ -166,10 +166,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host marrakech_shard3:27043 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       marrakech_shard2:
         condition: service_healthy
@@ -187,10 +187,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host agadir_shard1:27051 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       marrakech_shard3:
         condition: service_healthy
@@ -204,10 +204,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host agadir_shard2:27052 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       agadir_shard1:
         condition: service_healthy
@@ -221,10 +221,10 @@ services:
       - mongodb-network
     healthcheck:
       test: mongosh --host agadir_shard3:27053 --eval "db.adminCommand('ping').ok || db.hello().ok" || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 90s
     depends_on:
       agadir_shard2:
         condition: service_healthy
@@ -235,7 +235,7 @@ services:
   # =============================================
   mongos:
     image: mongo:6.0
-    command: mongos --configdb configrs/config1:27019,config2:27019,config3:27019 --bind_ip_all
+    command: mongos --configdb configrs/config1:27019,config2:27019,config3:27019 --bind_ip_all --setParameter logComponentVerbosity='{sharding:2}'
     ports:
       - "27017:27017"
     networks:
@@ -249,41 +249,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: mongosh --host mongos:27017 --eval "db.adminCommand('ping')" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  mongo-importer:
-    image: mongo:6.0
-    depends_on:
-      mongos:
-        condition: service_healthy
-    volumes:
-      - ./data/users.json:/data/users.json
-      - ./data/logements.json:/data/logements.json
-      - ./data/equipements.json:/data/equipements.json
-    command: >
-      bash -c "
-        echo 'Waiting for mongos to be ready...' &&
-        sleep 30 &&
-        echo 'Enabling sharding for ensahome database...' &&
-        mongosh --host mongos:27017 --eval '
-          sh.enableSharding(\"ensahome\");
-          sh.shardCollection(\"ensahome.users\", { ville: 1 });
-          sh.shardCollection(\"ensahome.logements\", { ville: 1 });
-          sh.shardCollection(\"ensahome.equipements\", { ville: 1 });
-        ' &&
-        echo 'Importing users.json...' &&
-        mongoimport --host mongos:27017 --db ensahome --collection users --file /data/users.json --jsonArray &&
-        echo 'Importing logements.json...' &&
-        mongoimport --host mongos:27017 --db ensahome --collection logements --file /data/logements.json --jsonArray &&
-        echo 'Importing equipements.json...' &&
-        mongoimport --host mongos:27017 --db ensahome --collection equipements --file /data/equipements.json --jsonArray &&
-        echo 'Import completed successfully'
-      "
-    networks:
-      - mongodb-network
+      interval: 30s
+      timeout: 20s
+      retries: 10
+      start_period: 120s
 
   # =============================================
   # Service d'initialisation
@@ -308,7 +277,7 @@ services:
         } catch (e) {
           print('Initializing replica set...');
         }
-        
+      
         rs.initiate({ 
           _id: 'configrs', 
           configsvr: true, 
@@ -318,27 +287,32 @@ services:
             { _id: 2, host: 'config3:27019' } 
           ] 
         });
-        
+      
         print('Waiting for replica set to initialize...');
-        
+      
         let attempts = 0;
-        while (attempts < 12) {
+        while (attempts < 20) {
           try {
             let status = rs.status();
             if (status.ok === 1 && status.members.some(m => m.state === 1)) {
               print('Replica set initialized successfully with a primary');
+      
+              // Attendre que les clés de chiffrement soient générées
+              print('Waiting for encryption keys...');
+              sleep(30000);
+      
               printjson(status);
               quit();
             }
           } catch (e) {
             print('Still waiting for replica set to initialize...');
           }
-          
-          sleep(10000);
+      
+          sleep(15000);
           attempts++;
         }
-        
-        print('Failed to initialize replica set after 12 attempts');
+      
+        print('Failed to initialize replica set after 20 attempts');
         quit(1);
       "
     networks:
@@ -356,8 +330,8 @@ services:
     command: >
       mongosh "mongodb://khouribga_shard1:27031" --eval "
         print('Waiting for Khouribga shard members to be ready...');
-        sleep(30000);
-        
+        sleep(45000);
+      
         try {
           if (rs.status().ok === 1) {
             print('Khouribga replica set already initialized');
@@ -366,7 +340,7 @@ services:
         } catch (e) {
           print('Initializing Khouribga replica set...');
         }
-        
+      
         rs.initiate({
           _id: 'khouribgaRS',
           members: [
@@ -375,11 +349,11 @@ services:
             { _id: 2, host: 'khouribga_shard3:27033' }
           ]
         });
-        
+      
         print('Waiting for Khouribga replica set to elect a primary...');
-        
+      
         let attempts = 0;
-        while (attempts < 12) {
+        while (attempts < 20) {
           try {
             let status = rs.status();
             if (status.ok === 1 && status.members.some(m => m.state === 1)) {
@@ -390,12 +364,12 @@ services:
           } catch (e) {
             print('Still waiting for Khouribga primary...');
           }
-          
-          sleep(10000);
+      
+          sleep(15000);
           attempts++;
         }
-        
-        print('Failed to elect a primary for Khouribga replica set after 12 attempts');
+      
+        print('Failed to elect a primary for Khouribga replica set after 20 attempts');
         quit(1);
       "
     networks:
@@ -415,7 +389,7 @@ services:
     command: >
       /bin/bash -c "
       echo 'Waiting for Marrakech shard members to be ready...' &&
-      sleep 30 &&
+      sleep 45 &&
       
       echo 'Initializing Marrakech shard replica set...' &&
       mongosh --host marrakech_shard1:27041 --eval '
@@ -436,24 +410,24 @@ services:
       ' &&
       
       echo 'Waiting for Marrakech replica set to elect a primary...' &&
-      sleep 30 &&
+      sleep 45 &&
       
-      for i in {1..12}; do
-        echo \"Checking primary status... Attempt ${i}/12\" &&
+      for i in {1..20}; do
+        echo \"Checking primary status... Attempt ${i}/20\" &&
         if mongosh --host marrakech_shard1:27041 --eval 'printjson(rs.status().members.some(function(m) { return m.state === 1; }))' --quiet | grep -q true; then
           echo 'Marrakech primary elected successfully' &&
           mongosh --host marrakech_shard1:27041 --eval 'rs.status()' &&
           echo 'Marrakech replica set initialized successfully' &&
           exit 0;
         fi &&
-        
-        if [ $i -eq 12 ]; then
-          echo 'Failed to elect a primary for Marrakech replica set after 12 attempts' &&
+      
+        if [ $i -eq 20 ]; then
+          echo 'Failed to elect a primary for Marrakech replica set after 20 attempts' &&
           exit 1;
         fi &&
-        
-        echo \"Still waiting for Marrakech primary... Attempt ${i}/12\" &&
-        sleep 10;
+      
+        echo \"Still waiting for Marrakech primary... Attempt ${i}/20\" &&
+        sleep 15;
       done
       "
     networks:
@@ -473,7 +447,7 @@ services:
     command: >
       /bin/bash -c "
       echo 'Waiting for Agadir shard members to be ready...' &&
-      sleep 30 &&
+      sleep 45 &&
       
       echo 'Initializing Agadir shard replica set...' &&
       mongosh --host agadir_shard1:27051 --eval '
@@ -494,24 +468,24 @@ services:
       ' &&
       
       echo 'Waiting for Agadir replica set to elect a primary...' &&
-      sleep 30 &&
+      sleep 45 &&
       
-      for i in {1..12}; do
-        echo \"Checking primary status... Attempt ${i}/12\" &&
+      for i in {1..20}; do
+        echo \"Checking primary status... Attempt ${i}/20\" &&
         if mongosh --host agadir_shard1:27051 --eval 'printjson(rs.status().members.some(function(m) { return m.state === 1; }))' --quiet | grep -q true; then
           echo 'Agadir primary elected successfully' &&
           mongosh --host agadir_shard1:27051 --eval 'rs.status()' &&
           echo 'Agadir replica set initialized successfully' &&
           exit 0;
         fi &&
-        
-        if [ $i -eq 12 ]; then
-          echo 'Failed to elect a primary for Agadir replica set after 12 attempts' &&
+      
+        if [ $i -eq 20 ]; then
+          echo 'Failed to elect a primary for Agadir replica set after 20 attempts' &&
           exit 1;
         fi &&
-        
-        echo \"Still waiting for Agadir primary... Attempt ${i}/12\" &&
-        sleep 10;
+      
+        echo \"Still waiting for Agadir primary... Attempt ${i}/20\" &&
+        sleep 15;
       done
       "
     networks:
@@ -530,34 +504,34 @@ services:
         condition: service_completed_successfully
     command: >
       mongosh --host mongos:27017 --eval '
-        sleep(60000);
+        sleep(90000);
         print("Adding shards...");
         sh.addShard("khouribgaRS/khouribga_shard1:27031");
         sh.addShard("marrakechRS/marrakech_shard1:27041");
         sh.addShard("agadirRS/agadir_shard1:27051");
-        
+      
         print("Enabling sharding for ensahome database...");
         sh.enableSharding("ensahome");
-        
+      
         print("Sharding users collection...");
         sh.shardCollection("ensahome.users", { ville: 1 });
         sh.shardCollection("ensahome.logements", { ville: 1 });
         sh.shardCollection("ensahome.equipements", { ville: 1 });
         sh.shardCollection("ensahome.notifications", { ville: 1 });
         sh.shardCollection("ensahome.announcements", { ville: 1 });
-        
-        
+      
+      
         print("Creating chunk splits...");
         # Users
         sh.splitAt("ensahome.users", { ville: "Agadir" });
         sh.splitAt("ensahome.users", { ville: "Khouribga" });
         sh.splitAt("ensahome.users", { ville: "Marrakech" });
-        
+      
         # Logements
         sh.splitAt("ensahome.logements", { ville: "Agadir" });
         sh.splitAt("ensahome.logements", { ville: "Khouribga" });
         sh.splitAt("ensahome.logements", { ville: "Marrakech" });
-        
+      
         # Equipements
         sh.splitAt("ensahome.equipements", { ville: "Agadir" });
         sh.splitAt("ensahome.equipements", { ville: "Khouribga" });
@@ -579,11 +553,11 @@ services:
         sh.moveChunk("ensahome.users", { ville: "Agadir" }, "agadirRS");
         sh.moveChunk("ensahome.users", { ville: "Khouribga" }, "khouribgaRS");
         sh.moveChunk("ensahome.users", { ville: "Marrakech" }, "marrakechRS");
-        
+      
         sh.moveChunk("ensahome.logements", { ville: "Agadir" }, "agadirRS");
         sh.moveChunk("ensahome.logements", { ville: "Khouribga" }, "khouribgaRS");
         sh.moveChunk("ensahome.logements", { ville: "Marrakech" }, "marrakechRS");
-        
+      
         sh.moveChunk("ensahome.equipements", { ville: "Agadir" }, "agadirRS");
         sh.moveChunk("ensahome.equipements", { ville: "Khouribga" }, "khouribgaRS");
         sh.moveChunk("ensahome.equipements", { ville: "Marrakech" }, "marrakechRS");
@@ -591,7 +565,7 @@ services:
         sh.moveChunk("ensahome.notifications", { ville: "Agadir" }, "agadirRS");
         sh.moveChunk("ensahome.notifications", { ville: "Khouribga" }, "khouribgaRS");
         sh.moveChunk("ensahome.notifications", { ville: "Marrakech" }, "marrakechRS");
-        
+      
         sh.moveChunk("ensahome.announcements", { ville: "Agadir" }, "agadirRS");
         sh.moveChunk("ensahome.announcements", { ville: "Khouribga" }, "khouribgaRS");
         sh.moveChunk("ensahome.announcements", { ville: "Marrakech" }, "marrakechRS");
@@ -601,7 +575,7 @@ services:
           print("Balancer is still running...");
           sleep(1000);
         }
-        
+      
         print("Verifying final distribution...");
         printjson(db.getSiblingDB("ensahome").users.getShardDistribution());
         printjson(db.getSiblingDB("ensahome").logements.getShardDistribution());
@@ -614,123 +588,29 @@ services:
     networks:
       - mongodb-network
 
-  # MongoDB Config Server Initializer
-  mongo-config-init:
+  mongo-importer:
     image: mongo:6.0
-    restart: "no"
-    networks:
-      - mongodb-network
     depends_on:
-      config1:
-        condition: service_healthy
-      config2:
-        condition: service_healthy
-      config3:
-        condition: service_healthy
+      init-shards:
+        condition: service_completed_successfully
+    volumes:
+      - ./data/users.json:/data/users.json
+      - ./data/logements.json:/data/logements.json
+      - ./data/equipements.json:/data/equipements.json
     command: >
-      mongosh --host config1:27019 --eval '
-        rs.initiate({
-          _id: "configrs",
-          configsvr: true,
-          members: [
-            {_id: 0, host: "config1:27019"},
-            {_id: 1, host: "config2:27019"},
-            {_id: 2, host: "config3:27019"}
-          ]
-        })
-      '
-
-  # MongoDB Shard Initializer
-  mongo-shard-init:
-    image: mongo:6.0
-    restart: "no"
-    networks:
-      - mongodb-network
-    depends_on:
-      mongos:
-        condition: service_healthy
-    command: >
-      /bin/bash -c "
-        echo 'Waiting for mongos to be ready...' &&
-        sleep 30 &&
-        echo 'Initializing shards...' &&
-        mongosh --host mongos:27017 --eval '
-          sh.addShard(\"khouribgaRS/khouribga_shard1:27031,khouribga_shard2:27032,khouribga_shard3:27033\");
-          sh.addShard(\"marrakechRS/marrakech_shard1:27041,marrakech_shard2:27042,marrakech_shard3:27043\");
-          sh.addShard(\"agadirRS/agadir_shard1:27051\");
-          sh.enableSharding(\"ensahome\");
-          sh.shardCollection(\"ensahome.users\", {\"ville\": \"hashed\"});
-        '
+      bash -c "
+        echo 'Waiting for cluster to be fully ready...' &&
+        sleep 60 &&
+        echo 'Importing users.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection users --file /data/users.json --jsonArray &&
+        echo 'Importing logements.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection logements --file /data/logements.json --jsonArray &&
+        echo 'Importing equipements.json...' &&
+        mongoimport --host mongos:27017 --db ensahome --collection equipements --file /data/equipements.json --jsonArray &&
+        echo 'Import completed successfully'
       "
-
-  # Khouribga Shard Initializer
-  khouribga-init:
-    image: mongo:6.0
-    restart: "no"
     networks:
       - mongodb-network
-    depends_on:
-      khouribga_shard1:
-        condition: service_healthy
-      khouribga_shard2:
-        condition: service_healthy
-      khouribga_shard3:
-        condition: service_healthy
-    command: >
-      mongosh --host khouribga_shard1:27031 --eval '
-        rs.initiate({
-          _id: "khouribgaRS",
-          members: [
-            {_id: 0, host: "khouribga_shard1:27031"},
-            {_id: 1, host: "khouribga_shard2:27032"},
-            {_id: 2, host: "khouribga_shard3:27033"}
-          ]
-        })
-      '
-
-  # Marrakech Shard Initializer
-  marrakech-init:
-    image: mongo:6.0
-    restart: "no"
-    networks:
-      - mongodb-network
-    depends_on:
-      marrakech_shard1:
-        condition: service_healthy
-      marrakech_shard2:
-        condition: service_healthy
-      marrakech_shard3:
-        condition: service_healthy
-    command: >
-      mongosh --host marrakech_shard1:27041 --eval '
-        rs.initiate({
-          _id: "marrakechRS",
-          members: [
-            {_id: 0, host: "marrakech_shard1:27041"},
-            {_id: 1, host: "marrakech_shard2:27042"},
-            {_id: 2, host: "marrakech_shard3:27043"}
-          ]
-        })
-      '
-
-  # Agadir Shard Initializer
-  agadir-init:
-    image: mongo:6.0
-    restart: "no"
-    networks:
-      - mongodb-network
-    depends_on:
-      agadir_shard1:
-        condition: service_healthy
-    command: >
-      mongosh --host agadir_shard1:27051 --eval '
-        rs.initiate({
-          _id: "agadirRS",
-          members: [
-            {_id: 0, host: "agadir_shard1:27051"}
-          ]
-        })
-      '
 
 networks:
   mongodb-network:
@@ -748,4 +628,4 @@ volumes:
   marrakech_shard3_data:
   agadir_shard1_data:
   agadir_shard2_data:
-  agadir_shard3_data: 
+  agadir_shard3_data:

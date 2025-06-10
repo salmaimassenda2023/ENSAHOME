@@ -45,7 +45,7 @@ RUN chown ensahome:ensahome app.jar
 USER ensahome
 
 # Exposer le port de l'application
-EXPOSE 8080
+EXPOSE 8085
 
 # Commande pour démarrer l'application
 ENTRYPOINT ["java", "-jar", "app.jar"]
