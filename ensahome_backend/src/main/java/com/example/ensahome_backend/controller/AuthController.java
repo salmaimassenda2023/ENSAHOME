@@ -1,5 +1,6 @@
 package com.example.ensahome_backend.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,11 @@ public class AuthController {
     @GetMapping("/hello")
     public String hello() {
         return "hello";
+    }
+
+    @GetMapping("/users")
+    public List<User> user() {
+        return service.findAll();
     }
 
 }

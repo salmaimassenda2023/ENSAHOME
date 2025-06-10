@@ -5,6 +5,7 @@ import Image from "next/image";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import LogoutButton from "../ui/LogoutButton";
 
 export default function Header() {
     const pathname = usePathname();
@@ -50,6 +51,7 @@ export default function Header() {
                 <Link href="/profil/publications" className="hover:text-gray-300 transition">
                     <IoPersonCircleSharp className="text-2xl" />
                 </Link>
+                <LogoutButton />
             </div>
         </div>
     );

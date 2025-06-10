@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ensahome_backend.dto.PublicationDto;
 import com.example.ensahome_backend.model.Annonce;
 import com.example.ensahome_backend.model.Announcement;
 import com.example.ensahome_backend.model.Equipement;
@@ -39,9 +40,21 @@ public class AnnouncementController {
     private EquipementService equipementService;
 
     
+    // Récupérer tous publications
+    @GetMapping("/publications")
+    public ResponseEntity<List<PublicationDto>> getPublications() {
+        // Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userId = ((CustomUserDetails) userDetails).getId();
+
+        // Récupérer les publications
+        List<PublicationDto> publicationDto = announcementService.getUserPublications(userId);
+        return ResponseEntity.ok(publicationDto);
+    }
     // Récupérer tous les annoces
     @GetMapping("/announcements")
-    public ResponseEntity<List<Announcement>> geAnnouncement() {
+    public ResponseEntity<List<Announcement>> getAnnouncement() {
         List<Announcement> announcements = announcementService.getActiveAnnouncements();
         return ResponseEntity.ok(announcements);
     }
@@ -94,7 +107,7 @@ public class AnnouncementController {
         // Créer une nouvelle annonce liée au équipement
         Announcement announcement = new Announcement();
         announcement.setTitle("Annonce pour équipement");
-        announcement.setLogementId(equipement.getId());
+        announcement.setEquipementId(equipement.getId());
         announcement.setAuthorId(userId); // On récupére l'id à partir du JWT
 
         // Enregistrer l'annonce

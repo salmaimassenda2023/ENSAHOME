@@ -2,14 +2,12 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useProfileContext } from "@/app/profil/layout";
-import { FaRegPlusSquare } from "react-icons/fa";
-import { logements, publications } from "@/data";
+import { FaRegPlusSquare, FaTimes } from "react-icons/fa";
 import EquipementCard from "@/components/ui/EquipementCard";
 import LogementCard from "@/components/ui/LogementCard";
-import Link from "next/link";
-import EquipementForm from "@/components/ui/EquipementForm" ;
+import EquipementForm from "@/components/ui/EquipementForm";
 import LogementForm from "@/components/ui/LogementForm";
-import { FaTimes } from "react-icons/fa";
+import Link from "next/link";
 
 export default function PublicationsPage() {
     const { setActiveTab } = useProfileContext();
@@ -20,12 +18,34 @@ export default function PublicationsPage() {
     // États pour la gestion des modals
     const [showEditModal, setShowEditModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
-    const [editFormType, setEditFormType] = useState(null); // "logements" ou "equipements"
+    const [editFormType, setEditFormType] = useState(null);
 
-    // Mettre à jour l'onglet actif lorsque la page est chargée
+    const [publications, setPublications] = useState([]);
+
     useEffect(() => {
         setActiveTab("publications");
+
+        const token = localStorage.getItem("token"); // ou sessionStorage.getItem("token")
+
+        fetch(`http://localhost:8081/publications`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Ajout du token ici
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Erreur lors du chargement des publications");
+                return res.json();
+            })
+            .then((data) => {
+                setPublications(data);
+            })
+            .catch((error) => {
+                console.error("Erreur de chargement des publications:", error);
+            });
     }, [setActiveTab]);
+
 
     // Fermer le menu d'action lorsqu'on clique à l'extérieur
     useEffect(() => {
@@ -131,7 +151,7 @@ export default function PublicationsPage() {
                         <div key={item.id} onDoubleClick={() => handleDoubleClick(item)}>
                             <LogementCard
                                 id={item.id}
-                                photos={item.photos[0]}
+                                photos={"/"+item.photos[0]}
                                 nbresPiece={item.nombrePieces}
                                 loyer={item.loyer}
                                 type={item.type}
@@ -142,7 +162,7 @@ export default function PublicationsPage() {
                         <div key={item.id} onDoubleClick={() => handleDoubleClick(item)}>
                             <EquipementCard
                                 id={item.id}
-                                photos={item.photos[0]}
+                                photos={"/"+item.photos[0]}
                                 designation={item.designation}
                                 prix={item.prix}
                             />

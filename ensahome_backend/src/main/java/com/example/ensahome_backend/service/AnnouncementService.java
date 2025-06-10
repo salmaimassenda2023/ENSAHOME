@@ -1,18 +1,33 @@
 package com.example.ensahome_backend.service;
 
+import com.example.ensahome_backend.dto.PublicationDto;
 import com.example.ensahome_backend.model.Announcement;
+import com.example.ensahome_backend.model.Equipement;
+import com.example.ensahome_backend.model.Logement;
 import com.example.ensahome_backend.repository.AnnouncementRepository;
+import com.example.ensahome_backend.repository.EquipementRepository;
+import com.example.ensahome_backend.repository.LogementRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AnnouncementService {
 
     @Autowired
     private AnnouncementRepository announcementRepository;
+    
+    @Autowired
+    private EquipementRepository equipementRepository;
+
+    @Autowired
+    private LogementRepository logementRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -36,6 +51,61 @@ public class AnnouncementService {
 
     public List<Announcement> getActiveAnnouncements() {
         return announcementRepository.findByActive(true);
+    }
+
+    public List<PublicationDto> getUserPublications(String userId) {
+        List<Announcement> announcements = announcementRepository.findByAuthorId(userId);
+        List<PublicationDto> publications = new ArrayList<>();
+        System.out.println("------- Hna : 0 --------");
+
+        for (Announcement announcement : announcements) {
+            PublicationDto dto = new PublicationDto();
+            dto.setId(announcement.getId());
+
+            if (announcement.getEquipementId() != null) {
+                System.out.println("------- Hna : equipements --------");
+        
+                Optional<Equipement> eqOpt = equipementRepository.findById(announcement.getEquipementId());
+                eqOpt.ifPresent(equipement -> {
+                    dto.setTypePub("equipements");
+                    dto.setPhotos(equipement.getPhotos());
+                    dto.setDesignation(equipement.getNom());
+                    dto.setDesc(equipement.getDescription());
+                    dto.setPrix(equipement.getPrix());
+                    // Tu peux ajouter état et icône dans un champ Map si tu veux
+                });
+            } else if (announcement.getLogementId() != null) {
+                System.out.println("------- Hna : logements --------");
+                System.out.println("announcement.getLogementId : " + announcement.getLogementId());
+                Optional<Logement> logOpt = logementRepository.findById(announcement.getLogementId());
+                System.out.println(logOpt);
+
+                logOpt.ifPresent(logement -> {
+                    dto.setTypePub("logements");
+                    dto.setPhotos(logement.getPhotos());
+                    dto.setAdresee(logement.getAdresse());
+                    dto.setProximite(logement.getProximite());
+                    dto.setDesc(logement.getDescription());
+                    dto.setLoyer(logement.getLoyer());
+                    dto.setType(logement.getType().toString());
+                    dto.setNombrePieces(logement.getNombrePieces());
+
+                    List<Map<String, String>> mappedCommodites = logement.getCommodites().stream()
+                        .map(commodite -> Map.of("nom", commodite.name()))
+                        .collect(Collectors.toList());
+
+                    dto.setCommodites(mappedCommodites);
+                System.out.println(dto);
+
+                });
+            } else{
+                System.out.println("------- Hna : walo--------");
+            }
+
+            publications.add(dto);
+        }
+
+        return publications;
     }
 
     public List<Announcement> getUserAnnouncements(String authorId) {
