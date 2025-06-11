@@ -22,7 +22,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8081/register', {
+      const response = await fetch('http://localhost:8086/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -27,7 +27,7 @@ export default function PublicationsPage() {
 
         const token = localStorage.getItem("token"); // ou sessionStorage.getItem("token")
 
-        fetch(`http://localhost:8081/publications`, {
+        fetch(`http://localhost:8086/publications`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
