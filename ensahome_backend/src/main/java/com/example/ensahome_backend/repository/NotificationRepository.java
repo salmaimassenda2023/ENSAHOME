@@ -11,6 +11,6 @@ public interface NotificationRepository extends MongoRepository<Notification, St
         String userId, 
         LocalDateTime now
     );
-    
+    List<Notification> findByUserId(String userid);
     void deleteByDateExpirationBefore(LocalDateTime date);
 } 

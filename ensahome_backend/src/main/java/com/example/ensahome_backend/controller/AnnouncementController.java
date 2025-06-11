@@ -1,5 +1,6 @@
 package com.example.ensahome_backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.example.ensahome_backend.service.AnnonceService;
 import com.example.ensahome_backend.service.AnnouncementService;
 import com.example.ensahome_backend.service.EquipementService;
 import com.example.ensahome_backend.service.LogementService;
+import com.example.ensahome_backend.service.NotificationService;
 
 @RestController
 public class AnnouncementController {
@@ -38,6 +40,8 @@ public class AnnouncementController {
     private LogementService logementService;
     @Autowired
     private EquipementService equipementService;
+    @Autowired
+    private NotificationService notificationService;
 
     
     // Récupérer tous publications
@@ -57,6 +61,17 @@ public class AnnouncementController {
     public ResponseEntity<List<Announcement>> getAnnouncement() {
         List<Announcement> announcements = announcementService.getActiveAnnouncements();
         return ResponseEntity.ok(announcements);
+    }
+
+    // Récupérer tous les notifications
+    @GetMapping("/notification")
+    public ResponseEntity<List<Notification>> getNotification() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userId = ((CustomUserDetails) userDetails).getId();
+        
+        List<Notification> notification = notificationService.getUserNotifications(userId);
+        return ResponseEntity.ok(notification);
     }
 
     // Récupérer les annoces d'un utilisateur
@@ -84,7 +99,17 @@ public class AnnouncementController {
 
         // Enregistrer l'annonce
         Announcement savedAnnouncement = announcementService.createAnnouncement(announcement);
-
+        
+        // Créer une notification pour l'annonce
+        Notification notification = new Notification();
+        notification.setUserId(userId);
+        notification.setMessage("Nouvelle annonce créée");
+        notification.setDetail("Votre annonce a été publiée avec succès");
+        notification.setDateExpiration(LocalDateTime.now().plusDays(10));
+        notification.setAnnouncementId(savedAnnouncement.getId());
+        notification.setActive(true);
+        notificationService.createNewAnnouncementNotification(savedAnnouncement);
+        
         // Retourner l'objet avec logement et annonce
         Map<String, Object> response = new HashMap<>();
         response.put("logement", logement);

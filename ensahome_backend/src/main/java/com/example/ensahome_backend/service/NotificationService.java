@@ -85,6 +85,9 @@ public class NotificationService {
         );
     }
 
+    public List<Notification> getAllNotifications(String userid){
+        return notificationRepository.findByUserId(userid);
+    }
     public void markAsRead(String notificationId) {
         notificationRepository.findById(notificationId)
             .ifPresent(notification -> {
