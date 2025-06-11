@@ -8,6 +8,7 @@ import LogementCard from "@/components/ui/LogementCard";
 import EquipementForm from "@/components/ui/EquipementForm";
 import LogementForm from "@/components/ui/LogementForm";
 import Link from "next/link";
+import { API_BASE_URL } from "@/components/lib/api";
 
 export default function PublicationsPage() {
     const { setActiveTab } = useProfileContext();
@@ -27,7 +28,7 @@ export default function PublicationsPage() {
 
         const token = localStorage.getItem("token"); // ou sessionStorage.getItem("token")
 
-        fetch(`http://localhost:8081/publications`, {
+        fetch(`${API_BASE_URL}/publications`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

@@ -5,12 +5,16 @@ import { useRouter } from 'next/navigation';
 import Input from "@/components/ui/Input";
 import { FaGoogle } from "react-icons/fa";
 import Header from '@/components/layout/Header';
+import Select from '@/components/ui/Select';
+import { API_BASE_URL } from '@/components/lib/api';
 
 
 export default function LoginPage() {
   const [name, setName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [ville, setVille] = useState('');
+
   // todo : complete imputs 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,14 +26,15 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8081/register', {
+      const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email,
-          password
+          password,
+          ville
         }),
         credentials: 'include' // Si vous utilisez des cookies/sessions
       });
@@ -65,6 +70,15 @@ export default function LoginPage() {
         <Input label="Nom" id="name" name="name" type="text" requiredvalue={name}onChange={(e) => setName(e.target.value)} />
         <Input label="Prémom" id="fist-name" name="fist-name" type="text" requiredvalue={firstName}onChange={(e) => setFirstName(e.target.value)} />
         <Input label="Mobile No." id="phone-number" name="phone-number" type="text" requiredvalue={phoneNumber}onChange={(e) => setPhoneNumber(e.target.value)} />
+        <Select
+          label="Ville" id="ville" name="ville" required value={ville} onChange={(e) => setVille(e.target.value)}
+          options={[
+            { value: "", label: "-- Sélectionnez --" },
+            { value: "Khouribga", label: "Khouribga" },
+            { value: "Fes", label: "Fes" },
+            { value: "El Jadida", label: "El Jadida" }
+          ]}
+        />
         <Input label="E-mail" id="email" name="email" type="email" requiredvalue={email}onChange={(e) => setEmail(e.target.value)} />
         <Input label="Password" id="password" name="password" type="password" requiredvalue={password}onChange={(e) => setPassword(e.target.value)} />
 

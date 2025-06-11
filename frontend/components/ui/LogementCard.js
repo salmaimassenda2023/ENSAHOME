@@ -1,8 +1,19 @@
 import Image from "next/image";
 import {IoIosArrowForward} from "react-icons/io";
 import Link from "next/link";
+import { FaCouch, FaParking, FaRecycle, FaSnowflake, FaWifi } from "react-icons/fa";
 
 export default function LogementCard({id, photos, nbresPiece, loyer, type, commodites = []}){
+    const commoditeIcons = {
+    MEUBLE: <FaCouch />,
+    climat: <FaSnowflake />,
+    Wifi:<FaWifi />,
+    Parking:<FaParking />,
+
+    utilisé:<FaRecycle />
+
+  // Ajoute d'autres si besoin
+};
 
     return(
         <div className="rounded-lg overflow-hidden shadow-lg w-150 h-125">
@@ -46,7 +57,7 @@ export default function LogementCard({id, photos, nbresPiece, loyer, type, commo
                 {
                     commodites && commodites.length > 0 && commodites.map((com) => (
                         <div className="flex space-x-2" key={com.nom} >
-                            <div className="text-blue-500 text-xl">{com.icon}</div>
+                            <div className="text-blue-500 text-xl">{commoditeIcons[com.nom]}</div>
                             <h5 className="text-sm font-medium">{com.nom}</h5>
                         </div>
                     ))

@@ -17,7 +17,7 @@ export default function EquipementForm({ initialData = null, onSubmit, isEditing
     // Initialisation des états
     const [formData, setFormData] = useState({
         designation: initialData?.designation || "",
-        etatEquipement: initialData?.etatEquipement || "Utilisé",
+        etatEquipement: initialData?.etatEquipement || "UTILISE",
         prix: initialData?.prix || "",
         description: initialData?.description || "",
         photos: initialData?.photos || []
@@ -123,9 +123,29 @@ export default function EquipementForm({ initialData = null, onSubmit, isEditing
                 });
             } else {
                 // Cas d'ajout normal
-                console.log("Données à envoyer:", formData);
-                alert("Annonce d'équipement publiée avec succès!");
-                // router.push('/confirmation');
+                // Récupérer le token JWT depuis le localStorage ou tout autre endroit où tu l’as stocké
+                const token = localStorage.getItem("token"); // ou sessionStorage.getItem("token")
+
+                fetch(`${API_BASE_URL}/announcement/equipement`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: formDataToSend
+                })
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || "Erreur lors de la soumission");
+                    }
+                    alert("Annonce d'équipement publiée avec succès!");
+                    router.push("/profil/publications");
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de l'envoi :", error);
+                    alert("Échec de l'envoi de l'équipement. Veuillez réessayer.");
+                });
+
             }
         } else {
             console.log("Formulaire invalide, veuillez corriger les erreurs");
@@ -177,8 +197,8 @@ export default function EquipementForm({ initialData = null, onSubmit, isEditing
                                 onChange={handleChange}
                                 className={`mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-10 ${errors.etatEquipement ? 'border-red-500' : ''}`}
                             >
-                                <option value="Neuf">Neuf</option>
-                                <option value="Utilisé">Utilisé</option>
+                                <option value="NEUF">Neuf</option>
+                                <option value="UTILISE">Utilisé</option>
                             </select>
                             {errors.etatEquipement && <p className="text-red-500 text-sm mt-1">{errors.etatEquipement}</p>}
                         </div>
