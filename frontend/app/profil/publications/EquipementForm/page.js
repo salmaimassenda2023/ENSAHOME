@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/components/lib/api";
 
 export default function EquipementForm({ initialData = null, onSubmit, isEditing = false }) {
     const router = useRouter();
