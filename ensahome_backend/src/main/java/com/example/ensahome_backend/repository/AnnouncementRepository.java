@@ -13,4 +13,7 @@ public interface AnnouncementRepository extends MongoRepository<Announcement, St
     List<Announcement> findByExpiresAtBeforeAndActiveTrue(LocalDateTime date);
     List<Announcement> findByLogementId(String logementId);
     List<Announcement> findByEquipementId(String equipementId);
+
+    List<Announcement> findByVille(String ville);
+
 } 

@@ -52,6 +52,20 @@ public class AnnouncementController {
         List<PublicationDto> publicationDto = announcementService.getUserPublications(userId);
         return ResponseEntity.ok(publicationDto);
     }
+
+    // Récupérer les publications par ville
+    @GetMapping("/publications/ville")
+    public ResponseEntity<List<PublicationDto>> getPublicationsCity() {
+        // Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userId = ((CustomUserDetails) userDetails).getId();
+
+        // Récupérer les publications
+        List<PublicationDto> publicationDto = announcementService.getCityPublications(userId);
+        return ResponseEntity.ok(publicationDto);
+    }
+
     // Récupérer tous les annoces
     @GetMapping("/announcements")
     public ResponseEntity<List<Announcement>> getAnnouncement() {
@@ -79,7 +93,8 @@ public class AnnouncementController {
         // Créer une nouvelle annonce liée au logement
         Announcement announcement = new Announcement();
         announcement.setTitle("Annonce pour logement");
-        announcement.setLogementId(logement.getId());
+        announcement.setLogementId(logement.getId());   
+        announcement.setVille(logement.getVille());   
         announcement.setAuthorId(userId); // On récupére l'id à partir du JWT
 
         // Enregistrer l'annonce
@@ -108,6 +123,7 @@ public class AnnouncementController {
         Announcement announcement = new Announcement();
         announcement.setTitle("Annonce pour équipement");
         announcement.setEquipementId(equipement.getId());
+        announcement.setVille(equipement.getVille());   
         announcement.setAuthorId(userId); // On récupére l'id à partir du JWT
 
         // Enregistrer l'annonce
